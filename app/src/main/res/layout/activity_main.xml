@@ -18,6 +18,42 @@
     <TextView
         android:id="@+id/output"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="waiting..."/>
+        android:layout_height="wrap_content"
+        android:text="waiting..." />
+
+    <SeekBar
+        android:id="@+id/seekBarHmin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255" />
+
+    <SeekBar
+        android:id="@+id/seekBarSmin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255" />
+
+    <SeekBar
+        android:id="@+id/seekBarVmin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255" />
+
+    <SeekBar
+        android:id="@+id/seekBarHmax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255" />
+
+    <SeekBar
+        android:id="@+id/seekBarSmax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255" />
+
+    <SeekBar
+        android:id="@+id/seekBarVmax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255" />
 </LinearLayout>

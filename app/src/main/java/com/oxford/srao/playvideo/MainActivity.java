@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +63,12 @@ public class MainActivity extends Activity {
     private static final int READ_REQUEST_CODE = 42;
     ImageView img;
     TextView tvoutput;
+    int H_MIN = 0;
+    int S_MIN = 0;
+    int V_MIN = 0;
+    int H_MAX = 180;
+    int S_MAX = 255;
+    int V_MAX = 30;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +85,115 @@ public class MainActivity extends Activity {
                         .setAction(Intent.ACTION_GET_CONTENT);
 
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
+            }
+        });
+
+        SeekBar seekBarHmin = findViewById(R.id.seekBarHmin);
+        SeekBar seekBarSmin = findViewById(R.id.seekBarSmin);
+        SeekBar seekBarVmin = findViewById(R.id.seekBarVmin);
+        SeekBar seekBarHmax = findViewById(R.id.seekBarHmin);
+        SeekBar seekBarSmax = findViewById(R.id.seekBarSmin);
+        SeekBar seekBarVmax = findViewById(R.id.seekBarVmin);
+        seekBarHmin.setProgress(H_MIN);
+        seekBarSmin.setProgress(S_MIN);
+        seekBarVmin.setProgress(V_MIN);
+        seekBarHmax.setProgress(H_MAX);
+        seekBarSmax.setProgress(S_MAX);
+        seekBarVmax.setProgress(V_MAX);
+        seekBarHmin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                H_MIN = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(MainActivity.this, "Value changed to:" + H_MIN, Toast.LENGTH_LONG).show();
+            }
+        });
+        seekBarSmin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                S_MIN = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(MainActivity.this, "Value changed to:" + S_MIN, Toast.LENGTH_LONG).show();
+            }
+        });
+        seekBarVmin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                V_MIN = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(MainActivity.this, "Value changed to:" + V_MIN, Toast.LENGTH_LONG).show();
+            }
+        });
+        seekBarHmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                H_MAX = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(MainActivity.this, "Value changed to:" + H_MAX, Toast.LENGTH_LONG).show();
+            }
+        });
+        seekBarSmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                S_MAX = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(MainActivity.this, "Value changed to:" + S_MAX, Toast.LENGTH_LONG).show();
+            }
+        });
+        seekBarVmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                V_MAX = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(MainActivity.this, "Value changed to:" + V_MAX, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -180,12 +296,7 @@ public class MainActivity extends Activity {
             Mat matHSV = new Mat();
             cvtColor(matFrame, matHSV, COLOR_BGR2HSV);
             Mat destMat = new Mat();
-            int H_MIN = 0;
-            int H_MAX = 256;
-            int S_MIN = 0;
-            int S_MAX = 50;
-            int V_MIN = 0;
-            int V_MAX = 256;
+
 
             inRange(matHSV,
                     new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)),
@@ -222,7 +333,7 @@ public class MainActivity extends Activity {
             Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
             int intRadius = (int) radius[0];
             Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
-            circle(matFrame, pointCenter, 4, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
+            circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
             final Bitmap currentImage = bitmapConverter.convert(matConverter.convert(matFrame));
 //            final ArrayList<GestureBean> rst = Predictor.predict(currentImage, this);
             long endRenderImage = System.nanoTime();
