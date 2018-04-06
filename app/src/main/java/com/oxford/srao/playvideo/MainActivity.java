@@ -12,18 +12,24 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 //import com.nononsenseapps.filepicker.FilePickerActivity;
 //import com.nononsenseapps.filepicker.Utils;
 
 import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_core.*;
+import org.bytedeco.javacpp.opencv_imgproc;
+import org.bytedeco.javacpp.opencv_imgproc.*;
 import org.bytedeco.javacpp.swresample;
 import org.bytedeco.javacv.AndroidFrameConverter;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,17 +37,38 @@ import java.io.InputStream;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
+import static org.bytedeco.javacpp.opencv_core.CV_32SC4;
+import static org.bytedeco.javacpp.opencv_core.CV_64FC1;
+import static org.bytedeco.javacpp.opencv_core.cvCreateMat;
+import static org.bytedeco.javacpp.opencv_core.inRange;
+import static org.bytedeco.javacpp.opencv_imgproc.CHAIN_APPROX_SIMPLE;
+import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2HSV;
+import static org.bytedeco.javacpp.opencv_imgproc.RETR_EXTERNAL;
+import static org.bytedeco.javacpp.opencv_imgproc.circle;
+import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
+import static org.bytedeco.javacpp.opencv_imgproc.cvFindContours;
+import static org.bytedeco.javacpp.opencv_imgproc.cvGetSpatialMoment;
+import static org.bytedeco.javacpp.opencv_imgproc.cvMoments;
+import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import static org.bytedeco.javacpp.opencv_imgproc.drawContours;
+import static org.bytedeco.javacpp.opencv_imgproc.findContours;
+import static org.bytedeco.javacpp.opencv_imgproc.minEnclosingCircle;
+import static org.bytedeco.javacpp.opencv_imgproc.moments;
+import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class MainActivity extends Activity {
     //public String selectedFile;
     private static InputStream stream;
     private static final int READ_REQUEST_CODE = 42;
     ImageView img;
+    TextView tvoutput;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         img = findViewById(R.id.image_view);
+        tvoutput = findViewById(R.id.output);
+
         findViewById(R.id.btnParseVideo).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -135,6 +162,8 @@ public class MainActivity extends Activity {
         int count = 0;
         videoGrabber.start();
         AndroidFrameConverter bitmapConverter = new AndroidFrameConverter();
+        OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
+        OpenCVFrameConverter.ToIplImage iplConverter = new OpenCVFrameConverter.ToIplImage();
         while (true) {
             long startRenderImage = System.nanoTime();
             frame = videoGrabber.grabFrame();
@@ -145,7 +174,56 @@ public class MainActivity extends Activity {
                 continue;
             }
             count++;
-            final Bitmap currentImage = bitmapConverter.convert(frame);
+            Mat matFrame = matConverter.convert(frame.clone());
+            Size newsize = new Size(frame.imageWidth/4, frame.imageHeight/4);
+            resize(matFrame, matFrame, newsize);
+            Mat matHSV = new Mat();
+            cvtColor(matFrame, matHSV, COLOR_BGR2HSV);
+            Mat destMat = new Mat();
+            int H_MIN = 0;
+            int H_MAX = 256;
+            int S_MIN = 0;
+            int S_MAX = 50;
+            int V_MIN = 0;
+            int V_MAX = 256;
+
+            inRange(matHSV,
+                    new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)),
+                    new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)),
+                    destMat);
+            //mask = cv2.bitwise_or(mask1, mask2)
+            //CvMemStorage memory=CvMemStorage.create();
+            //CvSeq cvSeq = new CvSeq();
+            MatVector contours = new MatVector();
+            Mat bestContour = new Mat();
+            //cvFindContours(destMat.clone(), memory, cvSeq, Loader.sizeof(CvContour.class), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+            findContours(destMat.clone(), contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+            Scalar color = new Scalar(239, 117, 94, 5);
+            double maxVal = 0;
+            int maxValIdx = 0;
+
+            for (int i = 0; i < contours.size(); i++) {
+                double eachContourArea = contourArea(contours.get(i));
+                if (maxVal < eachContourArea) {
+                    maxVal = eachContourArea;
+                    maxValIdx = i;
+                }
+            }
+            bestContour = contours.get(maxValIdx);
+            //iplConverter.convert(matFrame);
+            Moments bestMoments = new Moments();
+            bestMoments = moments(bestContour);
+            Log.i("moments", "" + bestMoments.m00());
+            Point2f center = new Point2f();
+            float[] radius = new float[1];
+            minEnclosingCircle(bestContour, center, radius);
+            //drawContours(matFrame, contours, maxValIdx, color);
+            //Mat blackMat = new Mat();
+            Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
+            int intRadius = (int) radius[0];
+            Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
+            circle(matFrame, pointCenter, 4, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
+            final Bitmap currentImage = bitmapConverter.convert(matConverter.convert(matFrame));
 //            final ArrayList<GestureBean> rst = Predictor.predict(currentImage, this);
             long endRenderImage = System.nanoTime();
             final Float renderFPS = 1000000000.0f / (endRenderImage - startRenderImage + 1);
@@ -153,7 +231,7 @@ public class MainActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-//                    outputTv.setText(String.format("读取数据FPS：%f,结果:%d", renderFPS, rst == null ? 0 : rst.size()));
+                    tvoutput.setText(String.format("FPS：%f", renderFPS));
                     img.setImageBitmap(currentImage);
                     //handler.postDelayed(this, 1000); // newline
                 }
