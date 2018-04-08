@@ -3,6 +3,7 @@ package com.oxford.srao.playvideo;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,8 +12,10 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,9 +61,9 @@ import static org.bytedeco.javacpp.opencv_imgproc.moments;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class MainActivity extends Activity {
-    //public String selectedFile;
     private static InputStream stream;
-    private static final int READ_REQUEST_CODE = 42;
+    Uri selectedFile;
+    Mat grabbedMatFrame;
     ImageView img;
     TextView tvoutput;
     int H_MIN = 0;
@@ -74,6 +77,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         img = findViewById(R.id.image_view);
+        //img.setBackgroundColor(Color.parseColor("blue"));
         tvoutput = findViewById(R.id.output);
 
         findViewById(R.id.btnParseVideo).setOnClickListener(new View.OnClickListener(){
@@ -88,6 +92,33 @@ public class MainActivity extends Activity {
             }
         });
 
+        findViewById(R.id.btnScreen1Next).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PlayVideoActivity.class); // replace PlayVideoActivity with PlayVideoImgActivity for ImageView version
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG);
+                } else {
+                    intent.putExtra("uri", selectedFile.toString());
+                    intent.putExtra("Hmin", H_MIN);
+                    intent.putExtra("Smin", S_MIN);
+                    intent.putExtra("Vmin", V_MIN);
+                    intent.putExtra("Hmax", H_MAX);
+                    intent.putExtra("Smax", S_MAX);
+                    intent.putExtra("Vmax", V_MAX);
+                    Switch switchShowThreshold = (Switch) findViewById(R.id.switchShowThreshold);
+                    intent.putExtra("isChecked", switchShowThreshold.isChecked());
+                    MainActivity.this.startActivity(intent);
+                }
+            }
+        });
+        Switch switchShowThreshold = (Switch) findViewById(R.id.switchShowThreshold);
+        switchShowThreshold.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                updateImage(grabbedMatFrame);
+            }
+        });
         SeekBar seekBarHmin = findViewById(R.id.seekBarHmin);
         SeekBar seekBarSmin = findViewById(R.id.seekBarSmin);
         SeekBar seekBarVmin = findViewById(R.id.seekBarVmin);
@@ -104,6 +135,7 @@ public class MainActivity extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 H_MIN = progress;
+                updateImage(grabbedMatFrame);
             }
 
             @Override
@@ -130,6 +162,7 @@ public class MainActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Toast.makeText(MainActivity.this, "Value changed to:" + S_MIN, Toast.LENGTH_LONG).show();
+                updateImage(grabbedMatFrame);
             }
         });
         seekBarVmin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -146,6 +179,7 @@ public class MainActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Toast.makeText(MainActivity.this, "Value changed to:" + V_MIN, Toast.LENGTH_LONG).show();
+                updateImage(grabbedMatFrame);
             }
         });
         seekBarHmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -162,6 +196,7 @@ public class MainActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Toast.makeText(MainActivity.this, "Value changed to:" + H_MAX, Toast.LENGTH_LONG).show();
+                updateImage(grabbedMatFrame);
             }
         });
         seekBarSmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -178,6 +213,7 @@ public class MainActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Toast.makeText(MainActivity.this, "Value changed to:" + S_MAX, Toast.LENGTH_LONG).show();
+                updateImage(grabbedMatFrame);
             }
         });
         seekBarVmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -194,6 +230,7 @@ public class MainActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Toast.makeText(MainActivity.this, "Value changed to:" + V_MAX, Toast.LENGTH_LONG).show();
+                updateImage(grabbedMatFrame);
             }
         });
     }
@@ -203,10 +240,13 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==123 && resultCode==RESULT_OK) {
-            Uri selectedFile = data.getData(); //The uri with the location of the file
+            selectedFile = data.getData(); //The uri with the location of the file
             try {
                 stream = getContentResolver().openInputStream(selectedFile);
                 Toast.makeText(getApplicationContext(), stream.toString(), Toast.LENGTH_LONG).show();
+                grabFirstFrame(stream);
+                //updateImage(grabbedFrame);
+                //img.setImageBitmap(currentImage);
             } catch(Exception e){
 
             }
@@ -214,41 +254,14 @@ public class MainActivity extends Activity {
             //Intent intent = new Intent(MainActivity.this, Main2Activity.class);
             //intent.putExtra("selectedFile", getPath(getApplicationContext(), selectedFile));
             //startActivity(intent);
-            startVideoParsing(stream);
+            //startVideoParsing(stream);
+
         }
     }
     public static InputStream getInStream() {
         return stream;
     }
 /*
-    public void performFileSearch() {
-
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-
-        intent.setType("video/*");
-
-        startActivityForResult(intent, READ_REQUEST_CODE);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent resultData) {
-
-        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-
-            Uri uri = null;
-            if (resultData != null) {
-                uri = resultData.getData();
-                //Log.i(TAG, "Uri: " + uri.toString());
-                String path = uri.getPath();
-                Log.i(TAG, "Uri: " + path);
-                //showImage(uri);
-                startVideoParsing(uri.toString());
-            }
-        }
-    }
-*/
-
     private void startVideoParsing(final InputStream stream) {
         Toast.makeText(MainActivity.this,
                 "playing..." + stream,
@@ -257,7 +270,7 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 try {
-                    doConvert(stream);
+                    showFirstFrame(stream);
                 } catch (FrameGrabber.Exception e) {
                     e.printStackTrace();
                 } catch (FrameRecorder.Exception e) {
@@ -268,86 +281,97 @@ public class MainActivity extends Activity {
             }
         }).start();
     }
-
-    private void doConvert(InputStream stream) throws
+*/
+    private void grabFirstFrame(InputStream stream) throws
             FrameGrabber.Exception,
             FrameRecorder.Exception,
             IOException {
         FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(stream);
         Frame frame;
-        int count = 0;
+        //int count = 0;
         videoGrabber.start();
-        AndroidFrameConverter bitmapConverter = new AndroidFrameConverter();
+
+        frame = videoGrabber.grabFrame();
         OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
-        OpenCVFrameConverter.ToIplImage iplConverter = new OpenCVFrameConverter.ToIplImage();
-        while (true) {
-            long startRenderImage = System.nanoTime();
-            frame = videoGrabber.grabFrame();
-            if (frame == null) {
-                break;
-            }
-            if (frame.image == null) {
-                continue;
-            }
-            count++;
-            Mat matFrame = matConverter.convert(frame.clone());
-            Size newsize = new Size(frame.imageWidth/4, frame.imageHeight/4);
-            resize(matFrame, matFrame, newsize);
-            Mat matHSV = new Mat();
-            cvtColor(matFrame, matHSV, COLOR_BGR2HSV);
-            Mat destMat = new Mat();
+        //OpenCVFrameConverter.ToIplImage iplConverter = new OpenCVFrameConverter.ToIplImage();
 
 
-            inRange(matHSV,
-                    new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)),
-                    new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)),
-                    destMat);
-            //mask = cv2.bitwise_or(mask1, mask2)
-            //CvMemStorage memory=CvMemStorage.create();
-            //CvSeq cvSeq = new CvSeq();
-            MatVector contours = new MatVector();
-            Mat bestContour = new Mat();
-            //cvFindContours(destMat.clone(), memory, cvSeq, Loader.sizeof(CvContour.class), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-            findContours(destMat.clone(), contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-            Scalar color = new Scalar(239, 117, 94, 5);
-            double maxVal = 0;
-            int maxValIdx = 0;
+        grabbedMatFrame = matConverter.convert(frame.clone());
+        Size newsize = new Size(frame.imageWidth/4, frame.imageHeight/4);
+        resize(grabbedMatFrame, grabbedMatFrame, newsize);
+        updateImage(grabbedMatFrame);
 
-            for (int i = 0; i < contours.size(); i++) {
-                double eachContourArea = contourArea(contours.get(i));
-                if (maxVal < eachContourArea) {
-                    maxVal = eachContourArea;
-                    maxValIdx = i;
-                }
-            }
-            bestContour = contours.get(maxValIdx);
-            //iplConverter.convert(matFrame);
-            Moments bestMoments = new Moments();
-            bestMoments = moments(bestContour);
-            Log.i("moments", "" + bestMoments.m00());
-            Point2f center = new Point2f();
-            float[] radius = new float[1];
-            minEnclosingCircle(bestContour, center, radius);
-            //drawContours(matFrame, contours, maxValIdx, color);
-            //Mat blackMat = new Mat();
-            Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
-            int intRadius = (int) radius[0];
-            Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
-            circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
-            final Bitmap currentImage = bitmapConverter.convert(matConverter.convert(matFrame));
-//            final ArrayList<GestureBean> rst = Predictor.predict(currentImage, this);
-            long endRenderImage = System.nanoTime();
-            final Float renderFPS = 1000000000.0f / (endRenderImage - startRenderImage + 1);
-            //final Handler handler = new Handler(); // newline
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    tvoutput.setText(String.format("FPS：%f", renderFPS));
-                    img.setImageBitmap(currentImage);
-                    //handler.postDelayed(this, 1000); // newline
-                }
-            });
-        }
+
+
+
     }
+
+    private void updateImage(Mat originalMatFrame){
+        Mat matFrame = originalMatFrame.clone();
+        long startRenderImage = System.nanoTime();
+        Bitmap currentImage;
+        OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
+        AndroidFrameConverter bitmapConverter = new AndroidFrameConverter();
+
+        Mat matHSV = new Mat();
+        cvtColor(matFrame, matHSV, COLOR_BGR2HSV);
+        Mat destMat = new Mat();
+
+
+        inRange(matHSV,
+                new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)),
+                new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)),
+                destMat);
+        //mask = cv2.bitwise_or(mask1, mask2)
+        //CvMemStorage memory=CvMemStorage.create();
+        //CvSeq cvSeq = new CvSeq();
+        MatVector contours = new MatVector();
+        Mat bestContour = new Mat();
+        //cvFindContours(destMat.clone(), memory, cvSeq, Loader.sizeof(CvContour.class), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+        findContours(destMat.clone(), contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+        Scalar color = new Scalar(239, 117, 94, 5);
+        double maxVal = 0;
+        int maxValIdx = 0;
+
+        for (int i = 0; i < contours.size(); i++) {
+            double eachContourArea = contourArea(contours.get(i));
+            if (maxVal < eachContourArea) {
+                maxVal = eachContourArea;
+                maxValIdx = i;
+            }
+        }
+        bestContour = contours.get(maxValIdx);
+        //iplConverter.convert(matFrame);
+        Moments bestMoments = new Moments();
+        bestMoments = moments(bestContour);
+        Log.i("moments", "" + bestMoments.m00());
+        Point2f center = new Point2f();
+        float[] radius = new float[1];
+        minEnclosingCircle(bestContour, center, radius);
+        //drawContours(matFrame, contours, maxValIdx, color);
+        //Mat blackMat = new Mat();
+        Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
+        int intRadius = (int) radius[0];
+        Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
+        circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
+        Switch switchShowThreshold = (Switch) findViewById(R.id.switchShowThreshold);
+        if (switchShowThreshold.isChecked()) {
+            currentImage = bitmapConverter.convert(matConverter.convert(destMat));
+        } else {
+            currentImage = bitmapConverter.convert(matConverter.convert(matFrame));
+        }
+
+
+//            final ArrayList<GestureBean> rst = Predictor.predict(currentImage, this);
+        long endRenderImage = System.nanoTime();
+        final Float renderFPS = 1000000000.0f / (endRenderImage - startRenderImage + 1);
+        //return(currentImage);
+        img.setImageBitmap(currentImage);
+        //Log.i(TAG, "frame" + frame.imageHeight + ":" + frame.imageWidth);
+        Log.i(TAG, "matFrame" + matFrame.rows() + ":" + matFrame.cols());
+
+
+    }
+
 }
 
