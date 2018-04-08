@@ -95,7 +95,7 @@ public class MainActivity extends Activity {
         findViewById(R.id.btnScreen1Next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PlayVideoActivity.class); // replace PlayVideoActivity with PlayVideoImgActivity for ImageView version
+                Intent intent = new Intent(MainActivity.this, PlayVideoImgActivity.class); // replace PlayVideoActivity with PlayVideoImgActivity for ImageView version
                 if (selectedFile == null) {
                     Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG);
                 } else {
@@ -122,9 +122,9 @@ public class MainActivity extends Activity {
         SeekBar seekBarHmin = findViewById(R.id.seekBarHmin);
         SeekBar seekBarSmin = findViewById(R.id.seekBarSmin);
         SeekBar seekBarVmin = findViewById(R.id.seekBarVmin);
-        SeekBar seekBarHmax = findViewById(R.id.seekBarHmin);
-        SeekBar seekBarSmax = findViewById(R.id.seekBarSmin);
-        SeekBar seekBarVmax = findViewById(R.id.seekBarVmin);
+        SeekBar seekBarHmax = findViewById(R.id.seekBarHmax);
+        SeekBar seekBarSmax = findViewById(R.id.seekBarSmax);
+        SeekBar seekBarVmax = findViewById(R.id.seekBarVmax);
         seekBarHmin.setProgress(H_MIN);
         seekBarSmin.setProgress(S_MIN);
         seekBarVmin.setProgress(V_MIN);
@@ -285,7 +285,7 @@ public class MainActivity extends Activity {
     private void grabFirstFrame(InputStream stream) throws
             FrameGrabber.Exception,
             FrameRecorder.Exception,
-            IOException {
+            IOException, NullPointerException {
         FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(stream);
         Frame frame;
         //int count = 0;
@@ -306,7 +306,7 @@ public class MainActivity extends Activity {
 
     }
 
-    private void updateImage(Mat originalMatFrame){
+    private void updateImage(Mat originalMatFrame) throws NullPointerException{
         Mat matFrame = originalMatFrame.clone();
         long startRenderImage = System.nanoTime();
         Bitmap currentImage;
@@ -322,6 +322,7 @@ public class MainActivity extends Activity {
                 new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)),
                 new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)),
                 destMat);
+
         //mask = cv2.bitwise_or(mask1, mask2)
         //CvMemStorage memory=CvMemStorage.create();
         //CvSeq cvSeq = new CvSeq();
@@ -343,11 +344,21 @@ public class MainActivity extends Activity {
         bestContour = contours.get(maxValIdx);
         //iplConverter.convert(matFrame);
         Moments bestMoments = new Moments();
-        bestMoments = moments(bestContour);
+        try {
+            bestMoments = moments(bestContour);
+
+        } catch (NullPointerException e) {
+            //
+        }
+
         Log.i("moments", "" + bestMoments.m00());
         Point2f center = new Point2f();
         float[] radius = new float[1];
-        minEnclosingCircle(bestContour, center, radius);
+        try {
+            minEnclosingCircle(bestContour, center, radius);
+        } catch (NullPointerException e) {
+            //
+        }
         //drawContours(matFrame, contours, maxValIdx, color);
         //Mat blackMat = new Mat();
         Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);

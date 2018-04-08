@@ -123,11 +123,18 @@ public class CanvasView extends View {
         }
 
         startVideoParsing(stream);
-        if (b != null) {
-            canvas.drawBitmap(b, 0, 0, null);
-        }
-        invalidate();
-        postInvalidateDelayed(500);
+        /* this doesn't crash, but doesn't show video
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (b != null) {
+                    canvas.drawBitmap(b, 0, 0, null);
+                }
+                invalidate();
+            }
+        }); */
+        canvas.drawBitmap(b, 0, 0, null);
+        //postInvalidateDelayed(500);
     }
 
     private void startVideoParsing(final InputStream stream) {
@@ -167,8 +174,8 @@ public class CanvasView extends View {
         opencv_core.Mat bestContour;
         float[] radius = new float[1];
         opencv_core.Mat displayFrame;
-
-        while (true) {
+        int length_frames = videoGrabber.getLengthInFrames();
+        while (count < length_frames) {
             long startRenderImage = System.nanoTime();
             frame = videoGrabber.grabFrame();
             if (frame == null) {
@@ -230,7 +237,8 @@ public class CanvasView extends View {
             //long endRenderImage = System.nanoTime();
             //final Float renderFPS = 1000000000.0f / (endRenderImage - startRenderImage + 1);
             //b = currentImage;
-            Log.i(TAG, "bitmap: " + b.getHeight());
+            Log.i(TAG, "bitmap: " + b.getByteCount());
+
             //return(currentImage);
             //final Handler handler = new Handler(); // newline
             /*

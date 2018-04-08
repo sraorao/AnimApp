@@ -138,6 +138,10 @@ public class PlayVideoImgActivity extends Activity {
         AndroidFrameConverter bitmapConverter = new AndroidFrameConverter();
         OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
         OpenCVFrameConverter.ToIplImage iplConverter = new OpenCVFrameConverter.ToIplImage();
+        Size newsize = new Size(videoGrabber.getImageWidth()/4, videoGrabber.getImageHeight()/4);
+        Mat matHSV = new Mat();
+        Mat destMat = new Mat();
+
         while (true) {
             long startRenderImage = System.nanoTime();
             frame = videoGrabber.grabFrame();
@@ -149,14 +153,11 @@ public class PlayVideoImgActivity extends Activity {
             }
             count++;
             Mat matFrame = matConverter.convert(frame.clone());
-            Size newsize = new Size(frame.imageWidth/4, frame.imageHeight/4);
             resize(matFrame, matFrame, newsize);
-            Mat matHSV = new Mat();
-            cvtColor(matFrame, matHSV, COLOR_BGR2HSV);
-            Mat destMat = new Mat();
+            cvtColor(matFrame, destMat, COLOR_BGR2HSV);
 
 
-            inRange(matHSV,
+            inRange(destMat,
                     new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)),
                     new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)),
                     destMat);
@@ -181,11 +182,19 @@ public class PlayVideoImgActivity extends Activity {
             bestContour = contours.get(maxValIdx);
             //iplConverter.convert(matFrame);
             Moments bestMoments = new Moments();
-            bestMoments = moments(bestContour);
-            Log.i("moments", "" + bestMoments.m00());
+            try {
+                bestMoments = moments(bestContour);
+            } catch(NullPointerException e) {
+                //
+            }
+            //Log.i("moments", "" + bestMoments.m00());
             Point2f center = new Point2f();
             float[] radius = new float[1];
-            minEnclosingCircle(bestContour, center, radius);
+            try {
+                minEnclosingCircle(bestContour, center, radius);
+            } catch(NullPointerException e) {
+                //
+            }
             //drawContours(matFrame, contours, maxValIdx, color);
             //Mat blackMat = new Mat();
             Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
