@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Fri Apr 06 19:57:59 BST 2018
+#Mon Apr 09 11:15:52 BST 2018
 124.path=lib/armeabi-v7a/libswscale.so
 60.set=NATIVE_RESOURCE
 52.set=NATIVE_RESOURCE

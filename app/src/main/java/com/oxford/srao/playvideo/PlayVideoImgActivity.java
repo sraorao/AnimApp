@@ -1,6 +1,7 @@
 package com.oxford.srao.playvideo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -20,8 +21,14 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.javacpp.opencv_core.Mat;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import static android.content.ContentValues.TAG;
 import static org.bytedeco.javacpp.opencv_core.CV_32SC4;
@@ -142,6 +149,8 @@ public class PlayVideoImgActivity extends Activity {
         Mat matHSV = new Mat();
         Mat destMat = new Mat();
 
+        String outputCSV = "";
+
         while (true) {
             long startRenderImage = System.nanoTime();
             frame = videoGrabber.grabFrame();
@@ -198,6 +207,9 @@ public class PlayVideoImgActivity extends Activity {
             //drawContours(matFrame, contours, maxValIdx, color);
             //Mat blackMat = new Mat();
             Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
+            outputCSV = count + "," + center.x() + "," + center.y() + "\n";
+            writeCSV(outputCSV, "test_output.csv", PlayVideoImgActivity.this);
+            Log.i(TAG, "outputCSV:" + outputCSV);
             int intRadius = (int) radius[0];
             Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
             circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
@@ -219,6 +231,29 @@ public class PlayVideoImgActivity extends Activity {
                     //handler.postDelayed(this, 1000); // newline
                 }
             });
+
+
+        }
+        //Log.i(TAG, "test_output: " + outputCSV);
+    }
+
+    private void writeCSV(String data, String fileName, Context context) {
+        try {
+            File path = context.getExternalFilesDir(null);
+            File file = new File(path, fileName);
+            FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+            bufferedWriter.write(data);
+            bufferedWriter.close();
+            outputStreamWriter.close();
+            fileOutputStream.close();
+            Log.i(TAG,"outputCSV length: " + data.length());
+            Log.i(TAG, "CSV written successfully");
+            Log.i(TAG, "filename: " + Uri.parse(selectedFile).getPath());
+        } catch(IOException e) {
+            Log.i(TAG, "CSV Writing failed" + e.toString());
         }
     }
 }
