@@ -125,11 +125,16 @@ public class MainActivity extends Activity {
             }
         });
 
-        Switch switchShowThreshold = (Switch) findViewById(R.id.switchShowThreshold);
+        final Switch switchShowThreshold = (Switch) findViewById(R.id.switchShowThreshold);
         switchShowThreshold.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                updateImage(grabbedMatFrame);
+                if (grabbedMatFrame == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_SHORT).show();
+                    switchShowThreshold.setChecked(false);
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
             }
         });
         SeekBar seekBarHmin = findViewById(R.id.seekBarHmin);
