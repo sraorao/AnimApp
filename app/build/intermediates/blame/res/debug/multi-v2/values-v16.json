@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/srao/AndroidStudioProjects/PlayVideo/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v16/values-v16.xml",
+            "outputFile": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v16/values-v16.xml",
             "map": [
                 {
                     "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/support-compat-26.1.0.aar/e0da15c50eed5f8cfdbaff45de53db60/res/values-v16/values-v16.xml",

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Play Video</string>
+    <string name="app_name">AnimApp</string>
     <string name="choose_file">Choose file</string>
     <string name="title_choose">Choose title</string>
     <string name="dialog_cancel">Cancel</string>
@@ -10,4 +10,5 @@
     <string name="processing">processing</string>
     <string name="permissions_denied_exit">permissions_denied_exit</string>
     <string name="title_activity_play_video">PlayVideoActivity</string>
+    <string name="title_activity_graph">GraphActivity</string>
 </resources>

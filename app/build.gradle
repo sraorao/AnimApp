@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.oxford.srao.playvideo"
+        applicationId "com.oxford.srao.animapp"
         minSdkVersion 20
         targetSdkVersion 26
         versionCode 1
@@ -32,6 +32,8 @@ dependencies {
     implementation group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.0-1.4', classifier: 'android-x86'
     implementation group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '3.4.1-1.4', classifier: 'android-arm'
     implementation group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '3.4.1-1.4', classifier: 'android-x86'
+
+    implementation 'com.jjoe64:graphview:4.2.1'
 /*
     implementation group: 'org.bytedeco', name: 'javacv', version: '1.4.1'
     implementation group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.1-1.4.1', classifier: 'android-arm'

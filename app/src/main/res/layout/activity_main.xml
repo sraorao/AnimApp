@@ -43,7 +43,7 @@
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="Smin"
                 tools:text="Smin" />
 
             <TextView
@@ -131,6 +131,15 @@
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="10dp"
             android:text="Next" />
+
+        <Button
+            android:id="@+id/btnAnalyse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:text="Analyse" />
     </FrameLayout>
 
 

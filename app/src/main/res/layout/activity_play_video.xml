@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.oxford.srao.playvideo.PlayVideoActivity">
+    tools:context="com.oxford.srao.animapp.PlayVideoActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
-        <com.oxford.srao.playvideo.CanvasView
+        <com.oxford.srao.animapp.CanvasView
             android:id="@+id/cvVideo"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

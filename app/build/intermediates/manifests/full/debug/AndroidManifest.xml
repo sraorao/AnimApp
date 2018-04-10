@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.oxford.srao.playvideo"
+    package="com.oxford.srao.animapp"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -22,7 +22,9 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.oxford.srao.playvideo.MainActivity" >
+        <activity
+            android:name="com.oxford.srao.animapp.MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,10 +32,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.oxford.srao.playvideo.PlayVideoActivity"
+            android:name="com.oxford.srao.animapp.PlayVideoActivity"
             android:label="@string/title_activity_play_video"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.oxford.srao.playvideo.PlayVideoImgActivity" />
+        <activity
+            android:name="com.oxford.srao.animapp.PlayVideoImgActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.oxford.srao.animapp.GraphActivity"
+            android:hardwareAccelerated="true"
+            android:label="@string/title_activity_graph"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="android.support.VERSION"
