@@ -20,7 +20,6 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/logo3ds_72dpi"
         android:supportsRtl="true"
-        android:testOnly="true"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.oxford.srao.animapp.MainActivity"
@@ -36,7 +35,9 @@
             android:label="@string/title_activity_play_video"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.oxford.srao.animapp.PlayVideoImgActivity" />
+        <activity
+            android:name="com.oxford.srao.animapp.PlayVideoImgActivity"
+            android:screenOrientation="landscape" />
         <activity
             android:name="com.oxford.srao.animapp.GraphActivity"
             android:hardwareAccelerated="true"
@@ -52,7 +53,5 @@
             android:name="android.arch.lifecycle.VERSION"
             android:value="27.0.0-SNAPSHOT" />
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

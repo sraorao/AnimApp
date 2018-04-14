@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Tue Apr 10 22:30:18 BST 2018
+#Sat Apr 14 01:41:42 BST 2018
 124.path=lib/armeabi-v7a/libopencv_calib3d.so
 60.set=NATIVE_RESOURCE
 52.set=NATIVE_RESOURCE

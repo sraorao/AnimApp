@@ -200,7 +200,7 @@ public class MainActivity extends Activity {
                 }
             }
         });
-        /*
+
         RangeBar mrbHue = findViewById(R.id.mrbHue);
         RangeBar mrbSat = findViewById(R.id.mrbSat);
         RangeBar mrbVal = findViewById(R.id.mrbVal);
@@ -247,8 +247,8 @@ public class MainActivity extends Activity {
                 }
             }
         });
-        */
 
+/*
         SeekBar seekBarHmin = findViewById(R.id.seekBarHmin);
         SeekBar seekBarSmin = findViewById(R.id.seekBarSmin);
         SeekBar seekBarVmin = findViewById(R.id.seekBarVmin);
@@ -387,7 +387,7 @@ public class MainActivity extends Activity {
                 //Toast.makeText(MainActivity.this, "Value changed to:" + V_MAX, Toast.LENGTH_SHORT).show();
             }
         });
-
+*/
         npMeasurement.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {

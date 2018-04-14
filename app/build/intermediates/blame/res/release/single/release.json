@@ -1,9 +1,5 @@
 [
     {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-xxxhdpi_ic_launcher_round.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"
-    },
-    {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable_abc_item_background_holo_dark.xml.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable/abc_item_background_holo_dark.xml"
     },
@@ -74,6 +70,10 @@
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xxxhdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xxxhdpi-v4/abc_tab_indicator_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-xhdpi_logo3ds_for_low_res_96x96.png.flat",
+        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-xhdpi/logo3ds_for_low_res_96x96.png"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/layout_sample_canvas_view.xml.flat",
@@ -368,10 +368,6 @@
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-hdpi-v4/abc_btn_radio_to_on_mtrl_000.png"
     },
     {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-mdpi_ic_launcher_round.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-mdpi/ic_launcher_round.png"
-    },
-    {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xxxhdpi-v4_abc_ic_menu_paste_mtrl_am_alpha.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xxxhdpi-v4/abc_ic_menu_paste_mtrl_am_alpha.png"
     },
@@ -386,6 +382,10 @@
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-ldrtl-mdpi-v17_abc_ic_menu_cut_mtrl_alpha.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-ldrtl-mdpi-v17/abc_ic_menu_cut_mtrl_alpha.png"
+    },
+    {
+        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-xxxhdpi_logo3ds_300dpi.png.flat",
+        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-xxxhdpi/logo3ds_300dpi.png"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-mdpi-v4_abc_ic_star_black_16dp.png.flat",
@@ -652,12 +652,12 @@
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/support-media-compat-26.1.0.aar/a39254da678e11b5b4fd470cf9525e89/res/layout/notification_media_action.xml"
     },
     {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-hdpi/ic_launcher.png"
-    },
-    {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xhdpi-v4_abc_ic_star_black_16dp.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xhdpi-v4/abc_ic_star_black_16dp.png"
+    },
+    {
+        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable_rotate.xml.flat",
+        "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/materialrangebar-1.4.1.aar/460c48d4f263a66289c76a9fc17b79f0/res/drawable/rotate.xml"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/layout_design_navigation_item_subheader.xml.flat",
@@ -734,10 +734,6 @@
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/layout-v26_abc_screen_toolbar.xml.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/layout-v26/abc_screen_toolbar.xml"
-    },
-    {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable_abc_btn_default_mtrl_shape.xml.flat",
@@ -868,6 +864,10 @@
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/design-26.1.0.aar/4a5b6641095b0c4c287a725a5e331f70/res/layout-sw600dp-v13/design_layout_snackbar.xml"
     },
     {
+        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-mdpi_logo3ds_for_low_res_48x48.png.flat",
+        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-mdpi/logo3ds_for_low_res_48x48.png"
+    },
+    {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xxxhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xxxhdpi-v4/abc_btn_radio_to_on_mtrl_000.png"
     },
@@ -934,10 +934,6 @@
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/color_abc_tint_seek_thumb.xml.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/color/abc_tint_seek_thumb.xml"
-    },
-    {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-hdpi_ic_launcher_round.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xhdpi-v4_abc_ic_menu_share_mtrl_alpha.png.flat",
@@ -1012,10 +1008,6 @@
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/design-26.1.0.aar/4a5b6641095b0c4c287a725a5e331f70/res/drawable/navigation_empty_icon.xml"
     },
     {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
-    },
-    {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-mdpi-v4_abc_btn_switch_to_on_mtrl_00001.9.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-mdpi-v4/abc_btn_switch_to_on_mtrl_00001.9.png"
     },
@@ -1026,10 +1018,6 @@
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xxhdpi-v4_abc_list_pressed_holo_light.9.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xxhdpi-v4/abc_list_pressed_holo_light.9.png"
-    },
-    {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-xxhdpi_ic_launcher_round.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xxxhdpi-v4_design_ic_visibility.png.flat",
@@ -1052,16 +1040,16 @@
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/layout/abc_alert_dialog_button_bar_material.xml"
     },
     {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-xhdpi_ic_launcher_round.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png"
-    },
-    {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xhdpi-v4_abc_scrubber_control_to_pressed_mtrl_005.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xhdpi-v4/abc_scrubber_control_to_pressed_mtrl_005.png"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xxhdpi-v4_abc_scrubber_control_to_pressed_mtrl_005.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xxhdpi-v4/abc_scrubber_control_to_pressed_mtrl_005.png"
+    },
+    {
+        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable_roundrect.xml.flat",
+        "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/materialrangebar-1.4.1.aar/460c48d4f263a66289c76a9fc17b79f0/res/drawable/roundrect.xml"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-hdpi-v4_notification_bg_normal.9.png.flat",
@@ -1088,8 +1076,8 @@
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-mdpi-v4/abc_textfield_default_mtrl_alpha.9.png"
     },
     {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/layout_activity_crop_frame.xml.flat",
+        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/layout/activity_crop_frame.xml"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xxhdpi-v4_abc_ic_star_half_black_36dp.png.flat",
@@ -1182,6 +1170,10 @@
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xxxhdpi-v4_abc_ic_star_half_black_48dp.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xxxhdpi-v4/abc_ic_star_half_black_48dp.png"
+    },
+    {
+        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-hdpi_logo3ds_for_low_res_72x72.png.flat",
+        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-hdpi/logo3ds_for_low_res_72x72.png"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/color-v11_abc_background_cache_hint_selector_material_light.xml.flat",
@@ -1352,10 +1344,6 @@
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xxhdpi-v4/abc_scrubber_primary_mtrl_alpha.9.png"
     },
     {
-        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-mdpi/ic_launcher.png"
-    },
-    {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xxhdpi-v4_abc_spinner_mtrl_am_alpha.9.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xxhdpi-v4/abc_spinner_mtrl_am_alpha.9.png"
     },
@@ -1426,6 +1414,10 @@
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-xhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat",
         "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/drawable-xhdpi-v4/abc_btn_radio_to_on_mtrl_000.png"
+    },
+    {
+        "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/mipmap-xxhdpi_logo3ds_72dpi.png.flat",
+        "source": "/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/mipmap-xxhdpi/logo3ds_72dpi.png"
     },
     {
         "merged": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/res/merged/release/drawable-hdpi-v4_abc_list_longpressed_holo.9.png.flat",

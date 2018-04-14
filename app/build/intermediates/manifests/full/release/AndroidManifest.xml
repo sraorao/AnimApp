@@ -14,10 +14,10 @@
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo3ds_72dpi"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo3ds_72dpi"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
@@ -36,13 +36,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.oxford.srao.animapp.PlayVideoImgActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
             android:name="com.oxford.srao.animapp.GraphActivity"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_graph"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name="com.oxford.srao.animapp.CropFrameActivity" />
 
         <meta-data
             android:name="android.support.VERSION"

@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-42:12
-INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-42:12
-INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-42:12
-INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-42:12
+ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-43:12
+INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-43:12
+INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-43:12
+INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-43:12
 MERGED from [com.android.support:design:26.1.0] /home/srao/.gradle/caches/transforms-1/files-1.1/design-26.1.0.aar/4a5b6641095b0c4c287a725a5e331f70/AndroidManifest.xml:17:1-31:12
 MERGED from [com.android.support:appcompat-v7:26.1.0] /home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/AndroidManifest.xml:17:1-31:12
 MERGED from [com.android.support.constraint:constraint-layout:1.0.2] /home/srao/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.0.2.aar/d9bf75241eeefee1a10fffa486152512/AndroidManifest.xml:2:1-11:12
@@ -20,20 +20,20 @@ MERGED from [com.android.support:support-media-compat:26.1.0] /home/srao/.gradle
 MERGED from [com.android.support:support-core-utils:26.1.0] /home/srao/.gradle/caches/transforms-1/files-1.1/support-core-utils-26.1.0.aar/c690d92574ff3a1f47cddb3bb748efeb/AndroidManifest.xml:17:1-31:12
 MERGED from [com.android.support:support-compat:26.1.0] /home/srao/.gradle/caches/transforms-1/files-1.1/support-compat-26.1.0.aar/e0da15c50eed5f8cfdbaff45de53db60/AndroidManifest.xml:17:1-31:12
 MERGED from [android.arch.lifecycle:runtime:1.0.0] /home/srao/.gradle/caches/transforms-1/files-1.1/runtime-1.0.0.aar/198e2d279011ff3d5bfa8b2759022317/AndroidManifest.xml:17:1-30:12
-INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-42:12
-INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-42:12
-INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-42:12
+INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-43:12
+INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-43:12
+INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-43:12
 	package
 		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:3:5-38
 		INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml
 		INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml
 	android:versionName
 		INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml
-		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-42:12
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-43:12
 		INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml
 	android:versionCode
 		INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml
-		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-42:12
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:1-43:12
 		INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:2:11-69
@@ -46,7 +46,7 @@ ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest
 	android:name
 		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:6:22-77
 application
-ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:8:5-40:19
+ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:8:5-41:19
 MERGED from [com.android.support:design:26.1.0] /home/srao/.gradle/caches/transforms-1/files-1.1/design-26.1.0.aar/4a5b6641095b0c4c287a725a5e331f70/AndroidManifest.xml:25:5-29:19
 MERGED from [com.android.support:design:26.1.0] /home/srao/.gradle/caches/transforms-1/files-1.1/design-26.1.0.aar/4a5b6641095b0c4c287a725a5e331f70/AndroidManifest.xml:25:5-29:19
 MERGED from [com.android.support:appcompat-v7:26.1.0] /home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/AndroidManifest.xml:25:5-29:19
@@ -120,25 +120,27 @@ ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest
 	android:name
 		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:27:13-46
 activity#com.oxford.srao.animapp.PlayVideoImgActivity
-ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:31:9-32:52
+ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:31:9-33:52
+	android:screenOrientation
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:33:13-50
 	android:name
 		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:32:13-49
 activity#com.oxford.srao.animapp.GraphActivity
-ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:33:9-38:59
+ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:34:9-39:59
 	android:screenOrientation
-		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:37:13-49
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:38:13-49
 	android:label
-		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:36:13-57
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:37:13-57
 	android:hardwareAccelerated
-		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:35:13-47
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:36:13-47
 	android:theme
-		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:38:13-56
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:39:13-56
 	android:name
-		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:34:13-42
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:35:13-42
 activity#com.oxford.srao.animapp.CropFrameActivity
-ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:39:9-64
+ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:40:9-64
 	android:name
-		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:39:19-52
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:40:19-52
 uses-sdk
 INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml
