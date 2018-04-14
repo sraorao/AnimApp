@@ -2,12 +2,15 @@ package com.oxford.srao.animapp;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
@@ -79,9 +82,20 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize HSV settings from previous run
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        H_MIN = prefs.getInt("H_MIN", 0);
+        S_MIN = prefs.getInt("S_MIN", 0);
+        V_MIN = prefs.getInt("V_MIN", 0);
+        H_MAX = prefs.getInt("H_MAX", 180);
+        S_MAX = prefs.getInt("S_MAX", 255);
+        V_MAX = prefs.getInt("V_MAX", 30);
+        Log.i(TAG, "prefs: " + H_MIN + "," + H_MAX + "," + S_MIN + "," + S_MAX + "," + V_MIN + "," + V_MAX );
+
         img = findViewById(R.id.image_view);
         final Switch switchCropVideo = findViewById(R.id.switchCropVideo);
-        NumberPicker npMeasurement = findViewById(R.id.npMeasurement);
+        final NumberPicker npMeasurement = findViewById(R.id.npMeasurement);
         npMeasurement.setMinValue(0);
         npMeasurement.setMaxValue(50);
         npMeasurement.setWrapSelectorWheel(true);
@@ -130,6 +144,11 @@ public class MainActivity extends Activity {
                         //drawOnRectProjectedBitMap((ImageView)v, grabbedMatFrame, x, y);
                         drawRectangle(grabbedMatFrame);
                         break;
+                }
+
+                float screenDistance =  Math.abs(startPt.y() - endPt.y());
+                if (screenDistance > 0) {
+                    scaleFactor = npMeasurement.getValue()/screenDistance;
                 }
                 /*
                  * Return 'true' to indicate that the event have been consumed.
@@ -240,6 +259,7 @@ public class MainActivity extends Activity {
             public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
                 V_MIN = leftPinIndex;
                 V_MAX = rightPinIndex;
+                Log.i(TAG, "V: " + V_MIN + ":" + V_MAX);
                 if (selectedFile == null) {
                     Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
                 } else {
@@ -422,13 +442,24 @@ public class MainActivity extends Activity {
                     tvoutput.setText(fileDisplayName);
                 }
             } catch(Exception e) {
-                Log.i(TAG, e.toString());
+                Log.i(TAG, "Error getting file info: " +  e.toString());
             } finally {
                 cursor.close();
             }
 
             if (fileSize > 80) {
                 Log.i(TAG, "file is too big!");
+                // setup the alert builder
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Large file");
+                builder.setMessage("This file is too big to load. File size can be reduced by turning off audio recording and recording at 640 x 480 resolution. Another option is to reduce file resolution using an external application like ffmpeg.");
+
+                // add a button
+                builder.setPositiveButton("OK", null);
+
+                // create and show the alert dialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 return;
             }
             try {
@@ -438,10 +469,10 @@ public class MainActivity extends Activity {
                 grabFirstFrame(stream);
                 //updateImage(grabbedFrame);
                 //img.setImageBitmap(currentImage);
-            } catch(OutOfMemoryError e){
-                Log.i(TAG, "This file is too big! Consider making it smaller by reducing resolution and/or removing audio.");
+            } catch(Error e){
+                Log.i(TAG, "This file is too big!" + e.toString());
             } catch(Exception e) {
-                Log.i(TAG, "Something went wrong with reading video file!");
+                Log.i(TAG, "Something went wrong with reading video file!" + e.toString());
             }
 
             // start new activity
@@ -480,6 +511,7 @@ public class MainActivity extends Activity {
             FrameGrabber.Exception,
             FrameRecorder.Exception,
             IOException, NullPointerException {
+
         FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(stream);
         Frame frame;
         //int count = 0;
@@ -507,10 +539,6 @@ public class MainActivity extends Activity {
         Log.i(TAG, "newsize: " + newsize.height() + "," + newsize.width() + "aspect ratio: " );
         resize(grabbedMatFrame, grabbedMatFrame, newsize);
         updateImage(grabbedMatFrame);
-
-
-
-
     }
 
     private void updateImage(Mat originalMatFrame) throws NullPointerException{
@@ -649,6 +677,21 @@ public class MainActivity extends Activity {
         img.setImageBitmap(currentImage);
 
 
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("H_MIN", H_MIN);
+        editor.putInt("H_MAX", H_MAX);
+        editor.putInt("S_MIN", S_MIN);
+        editor.putInt("S_MAX", S_MAX);
+        editor.putInt("V_MIN", V_MIN);
+        editor.putInt("V_MAX", V_MAX);
+        Log.i(TAG, "prefs: " + H_MIN + "," + H_MAX + "," + S_MIN + "," + S_MAX + "," + V_MIN + "," + V_MAX );
+        editor.apply();
     }
 
 }

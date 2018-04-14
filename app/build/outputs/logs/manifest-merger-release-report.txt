@@ -120,9 +120,9 @@ ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest
 	android:name
 		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:27:13-46
 activity#com.oxford.srao.animapp.PlayVideoImgActivity
-ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:31:9-33:52
+ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:31:9-33:51
 	android:screenOrientation
-		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:33:13-50
+		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:33:13-49
 	android:name
 		ADDED from /home/srao/AndroidStudioProjects/AnimApp/app/src/main/AndroidManifest.xml:32:13-49
 activity#com.oxford.srao.animapp.GraphActivity

@@ -41,6 +41,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.circle;
 import static org.bytedeco.javacpp.opencv_imgproc.contourArea;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 import static org.bytedeco.javacpp.opencv_imgproc.findContours;
+import static org.bytedeco.javacpp.opencv_imgproc.minAreaRect;
 import static org.bytedeco.javacpp.opencv_imgproc.minEnclosingCircle;
 import static org.bytedeco.javacpp.opencv_imgproc.moments;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
@@ -112,7 +113,7 @@ public class PlayVideoImgActivity extends Activity {
 
         try {
             stream = getContentResolver().openInputStream(Uri.parse(selectedFile));
-            Toast.makeText(getApplicationContext(), stream.toString(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), stream.toString(), Toast.LENGTH_LONG).show();
         } catch(Exception e){
 
         }
@@ -151,9 +152,9 @@ public class PlayVideoImgActivity extends Activity {
 */
 
     private void startVideoParsing(final InputStream stream) {
-        Toast.makeText(PlayVideoImgActivity.this,
-                "playing..." + stream,
-                Toast.LENGTH_SHORT).show();
+        //Toast.makeText(PlayVideoImgActivity.this,
+        //        "playing..." + stream,
+        //        Toast.LENGTH_SHORT).show();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -236,13 +237,12 @@ public class PlayVideoImgActivity extends Activity {
                 }
             }
             bestContour = contours.get(maxValIdx);
-            //iplConverter.convert(matFrame);
-            Moments bestMoments = new Moments();
-            try {
-                bestMoments = moments(bestContour);
-            } catch(NullPointerException e) {
+            //Moments bestMoments = new Moments();
+            //try {
+            //    bestMoments = moments(bestContour);
+            //} catch(NullPointerException e) {
                 //
-            }
+            //}
             //Log.i("moments", "" + bestMoments.m00());
             Point2f center = new Point2f();
             float[] radius = new float[1];
@@ -251,12 +251,19 @@ public class PlayVideoImgActivity extends Activity {
             } catch(NullPointerException e) {
                 //
             }
-            //drawContours(matFrame, contours, maxValIdx, color);
-            //Mat blackMat = new Mat();
-            Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
-            outputCSV = count + "," + center.x() + "," + center.y() + "\n";
+            RotatedRect minRect;
+            try {
+                minRect = minAreaRect(bestContour);
+            } catch (NullPointerException e) {
+                minRect = null;
+            }
+
+
+            //Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
+            outputCSV = count + "," + center.x() + "," + center.y()  + "," +
+                    minRect.size().height()  + "," + minRect.size().width()  + "," + minRect.angle() + "\n";
             writeCSV(outputCSV, fileDisplayName + ".csv", PlayVideoImgActivity.this);
-            Log.i(TAG, "outputCSV:" + outputCSV);
+            //Log.i(TAG, "outputCSV:" + outputCSV);
             int intRadius = (int) radius[0];
             Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
             circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
@@ -267,15 +274,11 @@ public class PlayVideoImgActivity extends Activity {
                 displayFrame = matFrame;
             }
             final Bitmap currentImage = bitmapConverter.convert(matConverter.convert(displayFrame));
-//            final ArrayList<GestureBean> rst = Predictor.predict(currentImage, this);
-            long endRenderImage = System.nanoTime();
-            final Float renderFPS = 1000000000.0f / (endRenderImage - startRenderImage + 1);
-            //final Handler handler = new Handler(); // newline
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     img.setImageBitmap(currentImage);
-                    //handler.postDelayed(this, 1000); // newline
                 }
             });
 

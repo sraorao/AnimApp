@@ -66,7 +66,7 @@ public class GraphActivity extends Activity {
         graphView.getViewport().setYAxisBoundsManual(true);
         graphView.getViewport().setMaxY(frameheight + 10);
         graphView.getViewport().setMinY(0);
-        Log.i(TAG, "X: " + framewidth + "Y: " + frameheight);
+        //Log.i(TAG, "X: " + framewidth + "Y: " + frameheight);
 
         findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +103,7 @@ public class GraphActivity extends Activity {
                     Toast.makeText(GraphActivity.this, "Enter an integer", Toast.LENGTH_SHORT).show();
                 }
                 List<String[]> csvLine = readCSVFromDownloadsFolder(fileDisplayName + ".csv");
-                Log.i(TAG, "totaldistance: " + calculateDistance(csvLine).toString());
+                //Log.i(TAG, "totaldistance: " + calculateDistance(csvLine).toString());
                 createLineGraph(csvLine);
 
                 tvDistance.setText("Total distance: " + formatter.format(calculateDistance(csvLine)).toString());
@@ -121,7 +121,7 @@ public class GraphActivity extends Activity {
         List<String[]> csvLine = new ArrayList<>();
         String[] content = null;
         try {
-            Log.i(TAG, fileName + ": display name - " + fileDisplayName);
+            //Log.i(TAG, fileName + ": display name - " + fileDisplayName);
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(path, fileName);
             FileInputStream fileInputStream = new FileInputStream(file);
@@ -185,12 +185,12 @@ public class GraphActivity extends Activity {
             dblDataFrame[i][3] = Math.sqrt(sq(dblDataFrame[i][1] - dblDataFrame[i + 1][1]) + sq(dblDataFrame[i][2] - dblDataFrame[i + 1][2]));
             dblTotalDistance += dblDataFrame[i][3];
         }
-        Log.i(TAG, "scaleFactor: " + scaleFactor);
+        //Log.i(TAG, "scaleFactor: " + scaleFactor);
         String summary = Calendar.getInstance().getTime() + "," + fileDisplayName + "," +
                 numFrames + "," + dblTotalDistance + "," + dblTotalDistance*scaleFactor + "\n";
-        Log.i(TAG, "summary: " + summary);
+        //Log.i(TAG, "summary: " + summary);
         writeCSV(summary, "AnimApp_summary.csv", GraphActivity.this);
-        Log.i(TAG, "summary written successfully");
+        //Log.i(TAG, "summary written successfully");
         return(dblTotalDistance);
     }
 
@@ -207,8 +207,8 @@ public class GraphActivity extends Activity {
             bufferedWriter.close();
             outputStreamWriter.close();
             fileOutputStream.close();
-            Log.i(TAG, "CSV written successfully");
-            Log.i(TAG, "filename: " + file.getPath());
+            //Log.i(TAG, "CSV written successfully");
+            //Log.i(TAG, "filename: " + file.getPath());
         } catch(IOException e) {
             Log.i(TAG, "CSV Writing failed" + e.toString());
 

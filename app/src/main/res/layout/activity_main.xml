@@ -50,6 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_toEndOf="@+id/tvHue"
+                android:layout_marginEnd="20dp"
                 app:mrb_pinMaxFont="10sp"
                 app:mrb_pinTextColor="#ACD123"
                 app:mrb_rangeBarPaddingBottom="10dp"
@@ -81,6 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_toEndOf="@+id/tvSat"
+                android:layout_marginEnd="20dp"
                 app:mrb_pinMaxFont="10sp"
                 app:mrb_pinTextColor="#ACD123"
                 app:mrb_rangeBarPaddingBottom="10dp"
@@ -112,6 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_toEndOf="@+id/tvVal"
+                android:layout_marginEnd="20dp"
                 app:mrb_pinMaxFont="10sp"
                 app:mrb_pinTextColor="#ACD123"
                 app:mrb_rangeBarPaddingBottom="10dp"
@@ -231,9 +234,9 @@
 
         <NumberPicker
             android:id="@+id/npMeasurement"
-            android:layout_width="89dp"
+            android:layout_width="wrap_content"
             android:layout_height="86dp"
-            android:layout_gravity="end" />
+            android:layout_gravity="center" />
     </FrameLayout>
 
 
