@@ -30,14 +30,17 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PlayVideoImgActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".GraphActivity"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_graph"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CropFrameActivity"></activity>
+        <activity android:name=".CropFrameActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

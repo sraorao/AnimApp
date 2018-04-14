@@ -10,9 +10,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -99,6 +101,7 @@ public class MainActivity extends Activity {
         npMeasurement.setMinValue(0);
         npMeasurement.setMaxValue(50);
         npMeasurement.setWrapSelectorWheel(true);
+        final Switch switchPlayVideo = findViewById(R.id.switchPlayVideo);
 
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -185,7 +188,7 @@ public class MainActivity extends Activity {
                     intent.putExtra("scaleFactor", scaleFactor);
                     intent.putExtra("width", newsize.width());
                     intent.putExtra("height", newsize.height());
-
+                    intent.putExtra("playVideo", switchPlayVideo.isChecked());
                     MainActivity.this.startActivity(intent);
                 }
             }
@@ -452,7 +455,7 @@ public class MainActivity extends Activity {
                 // setup the alert builder
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Large file");
-                builder.setMessage("This file is too big to load. File size can be reduced by turning off audio recording and recording at 640 x 480 resolution. Another option is to reduce file resolution using an external application like ffmpeg.");
+                builder.setMessage("This file is too big to load. File size can be reduced by turning off audio recording and recording at 640 x 480 resolution. File resolution can also be reduced or audio stripped using an external application like ffmpeg.");
 
                 // add a button
                 builder.setPositiveButton("OK", null);
@@ -693,6 +696,7 @@ public class MainActivity extends Activity {
         Log.i(TAG, "prefs: " + H_MIN + "," + H_MAX + "," + S_MIN + "," + S_MAX + "," + V_MIN + "," + V_MAX );
         editor.apply();
     }
+
 
 }
 

@@ -6,14 +6,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnParseVideo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Show first frame" />
+
 
     <ImageView
         android:id="@+id/image_view"
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"/>
@@ -213,7 +210,12 @@
             android:layout_height="wrap_content"
             android:text="Threshold"
             android:layout_gravity="start"/>
-
+        <Switch
+            android:id="@+id/switchPlayVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play video"
+            android:layout_gravity="center_horizontal"/>
         <Switch
             android:id="@+id/switchCropVideo"
             android:layout_width="wrap_content"
@@ -252,6 +254,14 @@
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="10dp"
             android:text="Next" />
+
+        <Button
+            android:id="@+id/btnParseVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:text="Open video" />
 
         <Button
             android:id="@+id/btnAnalyse"

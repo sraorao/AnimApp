@@ -44,6 +44,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.oxford.srao.animapp.CropFrameActivity" />
+        <activity
+            android:name="com.oxford.srao.animapp.SettingsActivity"
+            android:label="@string/title_activity_settings" />
 
         <meta-data
             android:name="android.support.VERSION"

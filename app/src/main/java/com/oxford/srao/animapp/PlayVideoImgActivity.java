@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.bytedeco.javacpp.opencv_core.*;
@@ -60,11 +61,15 @@ public class PlayVideoImgActivity extends Activity {
     public int S_MAX;
     public int V_MAX;
     public boolean isChecked;
+    public boolean playVideo;
+    public boolean done = false;
     String fileDisplayName;
     Size newsize;
     Point startPt = new Point(0, 0);
     Point endPt = new Point(0, 0);
     float scaleFactor = 1;
+    int count;
+
     //opencv_core.Mat grabbedMatFrame;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,19 +77,21 @@ public class PlayVideoImgActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_play_video_img);
         img = findViewById(R.id.image_view);
-        /*
+
         findViewById(R.id.btnScreen2Next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PlayVideoImgActivity.this, GraphActivity.class); // replace PlayVideoActivity with PlayVideoImgActivity for ImageView version
-                intent.putExtra("fileDisplayName", fileDisplayName);
-                intent.putExtra("framewidth", newsize.width());
-                intent.putExtra("frameheight", newsize.height());
-                intent.putExtra("scaleFactor", scaleFactor);
-                PlayVideoImgActivity.this.startActivity(intent);
+                if (done) {
+                    Intent intent = new Intent(PlayVideoImgActivity.this, GraphActivity.class); // replace PlayVideoActivity with PlayVideoImgActivity for ImageView version
+                    intent.putExtra("fileDisplayName", fileDisplayName);
+                    intent.putExtra("framewidth", newsize.width());
+                    intent.putExtra("frameheight", newsize.height());
+                    intent.putExtra("scaleFactor", scaleFactor);
+                    PlayVideoImgActivity.this.startActivity(intent);
+                }
             }
         });
-        */
+        /*
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +103,7 @@ public class PlayVideoImgActivity extends Activity {
                 PlayVideoImgActivity.this.startActivity(intent);
             }
         });
+        */
 
         selectedFile = getIntent().getStringExtra("uri");
         H_MIN = getIntent().getIntExtra("Hmin", 0);
@@ -110,7 +118,7 @@ public class PlayVideoImgActivity extends Activity {
         fileDisplayName = getIntent().getStringExtra("fileDisplayName");
         scaleFactor = getIntent().getFloatExtra("scaleFactor", 1);
         newsize = new Size(getIntent().getIntExtra("width", 640), getIntent().getIntExtra("height", 480));
-
+        playVideo = getIntent().getBooleanExtra("playVideo", false);
         try {
             stream = getContentResolver().openInputStream(Uri.parse(selectedFile));
             //Toast.makeText(getApplicationContext(), stream.toString(), Toast.LENGTH_LONG).show();
@@ -118,9 +126,6 @@ public class PlayVideoImgActivity extends Activity {
 
         }
         startVideoParsing(stream);
-
-
-
 
     }
 
@@ -169,6 +174,7 @@ public class PlayVideoImgActivity extends Activity {
                 }
             }
         }).start();
+
     }
 
     private void playVideo(InputStream stream) throws
@@ -177,7 +183,7 @@ public class PlayVideoImgActivity extends Activity {
             IOException {
         FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(stream);
         Frame frame;
-        int count = 0;
+        count = 0;
         videoGrabber.start();
         AndroidFrameConverter bitmapConverter = new AndroidFrameConverter();
         OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
@@ -273,17 +279,41 @@ public class PlayVideoImgActivity extends Activity {
             } else {
                 displayFrame = matFrame;
             }
-            final Bitmap currentImage = bitmapConverter.convert(matConverter.convert(displayFrame));
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    img.setImageBitmap(currentImage);
+                    TextView tvRun;
+                    tvRun = findViewById(R.id.tvRun);
+                    tvRun.setText("Frame: " + count);
                 }
             });
 
+            if (playVideo) {
+                final Bitmap currentImage = bitmapConverter.convert(matConverter.convert(displayFrame));
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        img.setImageBitmap(currentImage);
+                    }
+                });
+            }
+
+
 
         }
+        done = true;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView tvRun;
+                tvRun = findViewById(R.id.tvRun);
+                tvRun.setText("Done!");
+            }
+        });
+
+
         //Log.i(TAG, "test_output: " + outputCSV);
     }
 
