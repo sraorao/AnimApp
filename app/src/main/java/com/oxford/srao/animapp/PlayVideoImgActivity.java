@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -60,7 +61,9 @@ public class PlayVideoImgActivity extends Activity {
     public boolean isChecked;
     String fileDisplayName;
     Size newsize;
-
+    Point startPt = new Point(0, 0);
+    Point endPt = new Point(0, 0);
+    float scaleFactor = 1;
     //opencv_core.Mat grabbedMatFrame;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class PlayVideoImgActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_play_video_img);
         img = findViewById(R.id.image_view);
+        /*
         findViewById(R.id.btnScreen2Next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,9 +79,23 @@ public class PlayVideoImgActivity extends Activity {
                 intent.putExtra("fileDisplayName", fileDisplayName);
                 intent.putExtra("framewidth", newsize.width());
                 intent.putExtra("frameheight", newsize.height());
+                intent.putExtra("scaleFactor", scaleFactor);
                 PlayVideoImgActivity.this.startActivity(intent);
             }
         });
+        */
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlayVideoImgActivity.this, GraphActivity.class); // replace PlayVideoActivity with PlayVideoImgActivity for ImageView version
+                intent.putExtra("fileDisplayName", fileDisplayName);
+                intent.putExtra("framewidth", newsize.width());
+                intent.putExtra("frameheight", newsize.height());
+                intent.putExtra("scaleFactor", scaleFactor);
+                PlayVideoImgActivity.this.startActivity(intent);
+            }
+        });
+
         selectedFile = getIntent().getStringExtra("uri");
         H_MIN = getIntent().getIntExtra("Hmin", 0);
         S_MIN = getIntent().getIntExtra("Smin", 0);
@@ -85,9 +103,12 @@ public class PlayVideoImgActivity extends Activity {
         H_MAX = getIntent().getIntExtra("Hmax", 180);
         S_MAX = getIntent().getIntExtra("Smax", 255);
         V_MAX = getIntent().getIntExtra("Vmax", 30);
+        startPt = new Point(getIntent().getIntExtra("startX", 0), getIntent().getIntExtra("startY", 0));
+        endPt = new Point(getIntent().getIntExtra("endX", 0), getIntent().getIntExtra("endY", 0));
         isChecked = getIntent().getBooleanExtra("isChecked", false);
         fileDisplayName = getIntent().getStringExtra("fileDisplayName");
-
+        scaleFactor = getIntent().getFloatExtra("scaleFactor", 1);
+        newsize = new Size(getIntent().getIntExtra("width", 640), getIntent().getIntExtra("height", 480));
 
         try {
             stream = getContentResolver().openInputStream(Uri.parse(selectedFile));
@@ -160,8 +181,8 @@ public class PlayVideoImgActivity extends Activity {
         AndroidFrameConverter bitmapConverter = new AndroidFrameConverter();
         OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
         OpenCVFrameConverter.ToIplImage iplConverter = new OpenCVFrameConverter.ToIplImage();
-        newsize = new Size(videoGrabber.getImageWidth()/4, videoGrabber.getImageHeight()/4);
-
+        //newsize = new Size(videoGrabber.getImageWidth()/4, videoGrabber.getImageHeight()/4);
+        Rect roi = new Rect(startPt, endPt);
         Mat matHSV = new Mat();
         Mat destMat = new Mat();
 
@@ -184,6 +205,11 @@ public class PlayVideoImgActivity extends Activity {
             count++;
             Mat matFrame = matConverter.convert(frame.clone());
             resize(matFrame, matFrame, newsize);
+
+            if (startPt.x() > 0 && startPt.y() > 0 && endPt.x() > 0 && endPt.y() >0) {
+                Log.i(TAG, "points: " + startPt.x() + "," + startPt.y() + "," + endPt.x() + "," +endPt.y());
+                matFrame = new Mat(matFrame, roi);
+            }
             cvtColor(matFrame, destMat, COLOR_BGR2HSV);
 
 
@@ -274,6 +300,7 @@ public class PlayVideoImgActivity extends Activity {
             Log.i(TAG,"outputCSV length: " + data.length());
             Log.i(TAG, "CSV written successfully");
             Log.i(TAG, "filename: " + file.getPath());
+            Log.i(TAG, "scaleFactor screen2: " + scaleFactor);
         } catch(IOException e) {
             Log.i(TAG, "CSV Writing failed" + e.toString());
 

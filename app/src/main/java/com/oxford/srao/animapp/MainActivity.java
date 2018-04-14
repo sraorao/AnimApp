@@ -10,10 +10,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -21,6 +24,8 @@ import android.widget.Toast;
 
 //import com.nononsenseapps.filepicker.FilePickerActivity;
 //import com.nononsenseapps.filepicker.Utils;
+
+import com.appyvet.materialrangebar.RangeBar;
 
 import org.bytedeco.javacpp.opencv_core.*;
 import org.bytedeco.javacv.AndroidFrameConverter;
@@ -30,6 +35,7 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -48,12 +54,14 @@ import static org.bytedeco.javacpp.opencv_imgproc.drawContours;
 import static org.bytedeco.javacpp.opencv_imgproc.findContours;
 import static org.bytedeco.javacpp.opencv_imgproc.minEnclosingCircle;
 import static org.bytedeco.javacpp.opencv_imgproc.moments;
+import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class MainActivity extends Activity {
     private static InputStream stream;
     Uri selectedFile;
     Mat grabbedMatFrame;
+    Mat matFrame;
     ImageView img;
     TextView tvoutput;
     String fileDisplayName = "";
@@ -64,11 +72,19 @@ public class MainActivity extends Activity {
     int S_MAX = 255;
     int V_MAX = 30;
     Size newsize;
+    Point startPt = new Point(0, 0);
+    Point endPt = new Point(0, 0);
+    float scaleFactor = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         img = findViewById(R.id.image_view);
+        final Switch switchCropVideo = findViewById(R.id.switchCropVideo);
+        NumberPicker npMeasurement = findViewById(R.id.npMeasurement);
+        npMeasurement.setMinValue(0);
+        npMeasurement.setMaxValue(50);
+        npMeasurement.setWrapSelectorWheel(true);
 
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -88,6 +104,42 @@ public class MainActivity extends Activity {
             }
         });
 
+        img.setOnTouchListener(new View.OnTouchListener(){
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                int action = event.getAction();
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                switch(action){
+                    case MotionEvent.ACTION_DOWN:
+                        Log.i(TAG, "ACTION_DOWN- " + x + " : " + y);
+                        startPt = projectXY((ImageView)v, grabbedMatFrame, x, y);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        endPt = projectXY((ImageView)v, grabbedMatFrame, x, y);
+                        //drawOnRectProjectedBitMap((ImageView)v, grabbedMatFrame, x, y);
+                        drawRectangle(grabbedMatFrame);
+                        //Log.i(TAG,"ACTION_MOVE- " + x + " : " + y);
+                        //drawOnRectProjectedBitMap((ImageView)v, grabbedMatFrame, x, y);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.i(TAG,"ACTION_UP- " + x + " : " + y);
+                        endPt = projectXY((ImageView)v, grabbedMatFrame, x, y);
+                        //drawOnRectProjectedBitMap((ImageView)v, grabbedMatFrame, x, y);
+                        drawRectangle(grabbedMatFrame);
+                        break;
+                }
+                /*
+                 * Return 'true' to indicate that the event have been consumed.
+                 * If auto-generated 'false', your code can detect ACTION_DOWN only,
+                 * cannot detect ACTION_MOVE and ACTION_UP.
+                 */
+                //updateImage(grabbedMatFrame);
+                return true;
+            }});
+
         findViewById(R.id.btnScreen1Next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +157,16 @@ public class MainActivity extends Activity {
                     intent.putExtra("fileDisplayName", fileDisplayName);
                     Switch switchShowThreshold = (Switch) findViewById(R.id.switchShowThreshold);
                     intent.putExtra("isChecked", switchShowThreshold.isChecked());
+                    if (switchCropVideo.isChecked()) {
+                        intent.putExtra("startX", startPt.x());
+                        intent.putExtra("startY", startPt.y());
+                        intent.putExtra("endX", endPt.x());
+                        intent.putExtra("endY", endPt.y());
+                    }
+                    intent.putExtra("scaleFactor", scaleFactor);
+                    intent.putExtra("width", newsize.width());
+                    intent.putExtra("height", newsize.height());
+
                     MainActivity.this.startActivity(intent);
                 }
             }
@@ -120,6 +182,7 @@ public class MainActivity extends Activity {
                     intent.putExtra("fileDisplayName", fileDisplayName);
                     intent.putExtra("framewidth", newsize.width());
                     intent.putExtra("frameheight", newsize.height());
+                    intent.putExtra("scaleFactor", scaleFactor);
                     MainActivity.this.startActivity(intent);
                 }
             }
@@ -137,6 +200,55 @@ public class MainActivity extends Activity {
                 }
             }
         });
+        /*
+        RangeBar mrbHue = findViewById(R.id.mrbHue);
+        RangeBar mrbSat = findViewById(R.id.mrbSat);
+        RangeBar mrbVal = findViewById(R.id.mrbVal);
+
+        mrbHue.setRangePinsByValue(H_MIN, H_MAX);
+        mrbSat.setRangePinsByValue(S_MIN, S_MAX);
+        mrbVal.setRangePinsByValue(V_MIN, V_MAX);
+
+        mrbHue.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                H_MIN = leftPinIndex;
+                H_MAX = rightPinIndex;
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
+            }
+        });
+
+        mrbSat.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                S_MIN = leftPinIndex;
+                S_MAX = rightPinIndex;
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
+            }
+        });
+
+        mrbVal.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
+                V_MIN = leftPinIndex;
+                V_MAX = rightPinIndex;
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
+            }
+        });
+        */
+
         SeekBar seekBarHmin = findViewById(R.id.seekBarHmin);
         SeekBar seekBarSmin = findViewById(R.id.seekBarSmin);
         SeekBar seekBarVmin = findViewById(R.id.seekBarVmin);
@@ -153,7 +265,11 @@ public class MainActivity extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 H_MIN = progress;
-                updateImage(grabbedMatFrame);
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
             }
 
             @Override
@@ -163,13 +279,18 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(MainActivity.this, "Value changed to:" + H_MIN, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Value changed to:" + H_MIN, Toast.LENGTH_SHORT).show();
             }
         });
         seekBarSmin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 S_MIN = progress;
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
             }
 
             @Override
@@ -179,14 +300,18 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(MainActivity.this, "Value changed to:" + S_MIN, Toast.LENGTH_SHORT).show();
-                updateImage(grabbedMatFrame);
+                //Toast.makeText(MainActivity.this, "Value changed to:" + S_MIN, Toast.LENGTH_SHORT).show();
             }
         });
         seekBarVmin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 V_MIN = progress;
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
             }
 
             @Override
@@ -196,14 +321,18 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(MainActivity.this, "Value changed to:" + V_MIN, Toast.LENGTH_SHORT).show();
-                updateImage(grabbedMatFrame);
+                //Toast.makeText(MainActivity.this, "Value changed to:" + V_MIN, Toast.LENGTH_SHORT).show();
             }
         });
         seekBarHmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 H_MAX = progress;
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
             }
 
             @Override
@@ -213,14 +342,18 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(MainActivity.this, "Value changed to:" + H_MAX, Toast.LENGTH_SHORT).show();
-                updateImage(grabbedMatFrame);
+                //Toast.makeText(MainActivity.this, "Value changed to:" + H_MAX, Toast.LENGTH_SHORT).show();
             }
         });
         seekBarSmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 S_MAX = progress;
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
             }
 
             @Override
@@ -230,14 +363,18 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(MainActivity.this, "Value changed to:" + S_MAX, Toast.LENGTH_SHORT).show();
-                updateImage(grabbedMatFrame);
+                //Toast.makeText(MainActivity.this, "Value changed to:" + S_MAX, Toast.LENGTH_SHORT).show();
             }
         });
         seekBarVmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 V_MAX = progress;
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
             }
 
             @Override
@@ -247,27 +384,29 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(MainActivity.this, "Value changed to:" + V_MAX, Toast.LENGTH_SHORT).show();
-                updateImage(grabbedMatFrame);
+                //Toast.makeText(MainActivity.this, "Value changed to:" + V_MAX, Toast.LENGTH_SHORT).show();
             }
         });
+
+        npMeasurement.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                float screenDistance =  Math.abs(startPt.y() - endPt.y());
+                if (screenDistance > 0) {
+                    scaleFactor = newVal/screenDistance;
+                }
+            }
+        });
+
     }
 
     // result from file chooser
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        int fileSize = 0;
         if(requestCode==123 && resultCode==RESULT_OK) {
             selectedFile = data.getData(); //The uri with the location of the file
-            try {
-                stream = getContentResolver().openInputStream(selectedFile);
-                Toast.makeText(getApplicationContext(), selectedFile.toString(), Toast.LENGTH_SHORT).show();
-                grabFirstFrame(stream);
-                //updateImage(grabbedFrame);
-                //img.setImageBitmap(currentImage);
-            } catch(Exception e){
-                Log.i(TAG, "Something went wrong with reading video file!");
-            }
             Cursor cursor = null;
             try {
                 /*Cursor cursor = getContentResolver().query(selectedFile, null, null, null, null);
@@ -277,7 +416,9 @@ public class MainActivity extends Activity {
                 cursor = getContentResolver().query(selectedFile, null, null, null, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     fileDisplayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                    Log.i(TAG, "display name: " + fileDisplayName);
+                    fileSize = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE)))/(1024*1024);
+
+                    Log.i(TAG, "display name: " + fileDisplayName + ":" + fileSize + "MB");
                     tvoutput.setText(fileDisplayName);
                 }
             } catch(Exception e) {
@@ -285,6 +426,24 @@ public class MainActivity extends Activity {
             } finally {
                 cursor.close();
             }
+
+            if (fileSize > 80) {
+                Log.i(TAG, "file is too big!");
+                return;
+            }
+            try {
+
+                stream = getContentResolver().openInputStream(selectedFile);
+                Toast.makeText(getApplicationContext(), selectedFile.toString(), Toast.LENGTH_SHORT).show();
+                grabFirstFrame(stream);
+                //updateImage(grabbedFrame);
+                //img.setImageBitmap(currentImage);
+            } catch(OutOfMemoryError e){
+                Log.i(TAG, "This file is too big! Consider making it smaller by reducing resolution and/or removing audio.");
+            } catch(Exception e) {
+                Log.i(TAG, "Something went wrong with reading video file!");
+            }
+
             // start new activity
             //Intent intent = new Intent(MainActivity.this, Main2Activity.class);
             //intent.putExtra("selectedFile", getPath(getApplicationContext(), selectedFile));
@@ -330,9 +489,22 @@ public class MainActivity extends Activity {
         OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
         //OpenCVFrameConverter.ToIplImage iplConverter = new OpenCVFrameConverter.ToIplImage();
 
-
         grabbedMatFrame = matConverter.convert(frame.clone());
-        newsize = new Size(frame.imageWidth/4, frame.imageHeight/4);
+
+
+        float aspectRatioInverse = (float) videoGrabber.getImageHeight()/videoGrabber.getImageWidth();
+        float aspectRatio = (float) videoGrabber.getImageWidth()/videoGrabber.getImageHeight();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels/3;
+        int displayWidth = displayMetrics.widthPixels;
+        if (aspectRatio*height > displayWidth) {
+            newsize = new Size(displayWidth, (int) (aspectRatioInverse*displayWidth));
+        } else {
+            newsize = new Size((int) (aspectRatio*height), height);
+        }
+        //newsize = new Size(videoGrabber.getImageWidth()/4, videoGrabber.getImageHeight()/4);
+        Log.i(TAG, "newsize: " + newsize.height() + "," + newsize.width() + "aspect ratio: " );
         resize(grabbedMatFrame, grabbedMatFrame, newsize);
         updateImage(grabbedMatFrame);
 
@@ -400,6 +572,7 @@ public class MainActivity extends Activity {
         int intRadius = (int) radius[0];
         Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
         circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
+
         Switch switchShowThreshold = (Switch) findViewById(R.id.switchShowThreshold);
         if (switchShowThreshold.isChecked()) {
             currentImage = bitmapConverter.convert(matConverter.convert(destMat));
@@ -443,6 +616,39 @@ public class MainActivity extends Activity {
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    private Point projectXY(ImageView iv, Mat mat, int x, int y){
+        if(x<0 || y<0 || x > iv.getWidth() || y > iv.getHeight()){
+            //outside ImageView
+            return null;
+        }else{
+            int projectedX = (int)((double)x * ((double)mat.cols()/(double)iv.getWidth()));
+            int projectedY = (int)((double)y * ((double)mat.rows()/(double)iv.getHeight()));
+
+            return new Point(projectedX, projectedY);
+        }
+    }
+
+    private void drawRectangle(Mat originalMatFrame) throws NullPointerException{
+        matFrame = originalMatFrame.clone();
+        Bitmap currentImage;
+        OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
+        AndroidFrameConverter bitmapConverter = new AndroidFrameConverter();
+        //Exit if the point is outside imageview
+        if (startPt == null || endPt == null) {
+            return;
+        }
+        Log.i(TAG, "points: " + startPt.x() + startPt.y() + endPt.x() + endPt.y());
+        rectangle(matFrame, startPt, endPt, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN);
+
+        currentImage = bitmapConverter.convert(matConverter.convert(matFrame));
+        //selectView.setImageBitmap(currentImage);
+
+
+        img.setImageBitmap(currentImage);
+
+
     }
 
 }

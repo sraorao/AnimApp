@@ -13,8 +13,9 @@
 
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="match_parent"
-        android:layout_height="540px" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
 
     <TextView
         android:id="@+id/output"
@@ -113,34 +114,63 @@
                 android:max="255" />
         </LinearLayout>
     </LinearLayout>
-    <Switch
-        android:id="@+id/switchShowThreshold"
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Show thresholded image" />
+        android:layout_height="wrap_content">
+        <Switch
+            android:id="@+id/switchShowThreshold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Threshold"
+            android:layout_gravity="start"/>
+
+        <Switch
+            android:id="@+id/switchCropVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crop"
+            android:layout_gravity="end"/>
+
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tvMeasurement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Real distance (cm)"
+            android:layout_gravity="center_vertical" />
+
+        <NumberPicker
+            android:id="@+id/npMeasurement"
+            android:layout_width="89dp"
+            android:layout_height="86dp"
+            android:layout_gravity="end" />
+    </FrameLayout>
+
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btnScreen1Next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="10dp"
-            android:text="Next" />
+    <Button
+        android:id="@+id/btnScreen1Next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="Next" />
 
-        <Button
-            android:id="@+id/btnAnalyse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
-            android:text="Analyse" />
+    <Button
+        android:id="@+id/btnAnalyse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:text="Analyse" />
     </FrameLayout>
-
-
 </LinearLayout>
