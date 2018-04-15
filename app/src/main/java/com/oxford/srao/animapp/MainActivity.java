@@ -740,36 +740,43 @@ public class MainActivity extends Activity {
     }
 
     private Point projectXY(ImageView iv, Mat mat, int x, int y){
-        if(x<0 || y<0 || x > iv.getWidth() || y > iv.getHeight()){
-            //outside ImageView
-            return null;
-        }else{
-            int projectedX = (int)((double)x * ((double)mat.cols()/(double)iv.getWidth()));
-            int projectedY = (int)((double)y * ((double)mat.rows()/(double)iv.getHeight()));
-
-            return new Point(projectedX, projectedY);
+        //handle if x or y outside ImageView
+        if(x > iv.getWidth()){
+            x = iv.getWidth();
+        } else if (y > iv.getHeight()) {
+            y = iv.getHeight();
+        } else if (x < 0){
+            x = 0;
+        } else if (y < 0) {
+            y = 0;
         }
+
+        int projectedX = (int)((double)x * ((double)mat.cols()/(double)iv.getWidth()));
+        int projectedY = (int)((double)y * ((double)mat.rows()/(double)iv.getHeight()));
+
+        return new Point(projectedX, projectedY);
+
     }
 
-    private void drawRectangle(Mat originalMatFrame) throws NullPointerException{
+    private void drawRectangle(Mat originalMatFrame) {
         matFrame = originalMatFrame.clone();
         Bitmap currentImage;
         OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
         AndroidFrameConverter bitmapConverter = new AndroidFrameConverter();
-        //Exit if the point is outside imageview
-        if (startPt == null || endPt == null) {
+
+        try {
+            Log.i(TAG, "points: " + startPt.x() + startPt.y() + endPt.x() + endPt.y());
+            rectangle(matFrame, startPt, endPt, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN);
+
+            currentImage = bitmapConverter.convert(matConverter.convert(matFrame));
+            //selectView.setImageBitmap(currentImage);
+
+
+            img.setImageBitmap(currentImage);
+        } catch (NullPointerException e) {
+            //Exit if the point is outside imageview
             return;
         }
-        Log.i(TAG, "points: " + startPt.x() + startPt.y() + endPt.x() + endPt.y());
-        rectangle(matFrame, startPt, endPt, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN);
-
-        currentImage = bitmapConverter.convert(matConverter.convert(matFrame));
-        //selectView.setImageBitmap(currentImage);
-
-
-        img.setImageBitmap(currentImage);
-
-
     }
 
     @Override

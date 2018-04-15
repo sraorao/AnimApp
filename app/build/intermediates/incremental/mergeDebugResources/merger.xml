@@ -1996,13 +1996,13 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="multiSliderStyle">@style/Widget.MultiSlider</item>
+    </style><style name="Widget.MultiSlider" parent="android:Widget">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:thumb">@drawable/multislider_thumb_material</item>
     </style><style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style><style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/><style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/><style name="Widget.MultiSlider" parent="android:Widget">
-        <item name="android:background">@color/transparent</item>
-        <item name="android:thumb">@drawable/multislider_thumb_material</item>
-    </style></file><file path="/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/values/attrs_canvas_view.xml" qualifiers=""><declare-styleable name="canvasView">
+    </style><style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/><style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/></file><file path="/home/srao/AndroidStudioProjects/AnimApp/app/src/main/res/values/attrs_canvas_view.xml" qualifiers=""><declare-styleable name="canvasView">
         <attr format="string" name="exampleString"/>
         <attr format="dimension" name="exampleDimension"/>
         <attr format="color" name="exampleColor"/>

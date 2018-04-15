@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Sun Apr 15 10:49:18 BST 2018
+#Sun Apr 15 11:34:22 BST 2018
 124.path=lib/x86/libjniavfilter.so
 60.set=NATIVE_RESOURCE
 52.set=NATIVE_RESOURCE
