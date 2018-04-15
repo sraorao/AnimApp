@@ -30,7 +30,7 @@ import android.widget.Toast;
 //import com.nononsenseapps.filepicker.FilePickerActivity;
 //import com.nononsenseapps.filepicker.Utils;
 
-import com.appyvet.materialrangebar.RangeBar;
+//import com.appyvet.materialrangebar.RangeBar;
 
 import org.bytedeco.javacpp.opencv_core.*;
 import org.bytedeco.javacv.AndroidFrameConverter;
@@ -43,6 +43,8 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+import io.apptik.widget.MultiSlider;
 
 import static android.content.ContentValues.TAG;
 import static org.bytedeco.javacpp.opencv_core.CV_32SC4;
@@ -223,13 +225,101 @@ public class MainActivity extends Activity {
             }
         });
 
-        RangeBar mrbHue = findViewById(R.id.mrbHue);
-        RangeBar mrbSat = findViewById(R.id.mrbSat);
-        RangeBar mrbVal = findViewById(R.id.mrbVal);
 
-        mrbHue.setRangePinsByValue(H_MIN, H_MAX);
-        mrbSat.setRangePinsByValue(S_MIN, S_MAX);
-        mrbVal.setRangePinsByValue(V_MIN, V_MAX);
+        MultiSlider mrbHue = findViewById(R.id.mrbHue);
+        MultiSlider mrbSat = findViewById(R.id.mrbSat);
+        MultiSlider mrbVal = findViewById(R.id.mrbVal);
+
+
+        mrbHue.setMax(179);
+        mrbHue.setMin(0);
+        mrbSat.setMax(255);
+        mrbSat.setMin(0);
+        mrbVal.setMax(255);
+        mrbVal.setMin(0);
+
+        // Initialize thumbs at previously saved locations
+        mrbHue.removeThumb(0);
+        mrbHue.removeThumb(0);
+        mrbHue.addThumbOnPos(0, H_MIN);
+        mrbHue.addThumbOnPos(1, H_MAX);
+
+        mrbSat.removeThumb(0);
+        mrbSat.removeThumb(0);
+        mrbSat.addThumbOnPos(0, S_MIN);
+        mrbSat.addThumbOnPos(1, S_MAX);
+
+        mrbVal.removeThumb(0);
+        mrbVal.removeThumb(0);
+        mrbVal.addThumbOnPos(0, V_MIN);
+        mrbVal.addThumbOnPos(1, V_MAX);
+
+        mrbHue.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
+            @Override
+            public void onValueChanged(MultiSlider multiSlider,
+                                       MultiSlider.Thumb thumb,
+                                       int thumbIndex,
+                                       int value)
+            {
+                if (thumbIndex == 0) {
+                    H_MIN = value;
+                    tvoutput.setText("H_MIN: " + value);
+                } else {
+                    H_MAX = value;
+                    tvoutput.setText("H_MAX: " + value);
+                }
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
+            }
+        });
+
+        mrbSat.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
+            @Override
+            public void onValueChanged(MultiSlider multiSlider,
+                                       MultiSlider.Thumb thumb,
+                                       int thumbIndex,
+                                       int value)
+            {
+                if (thumbIndex == 0) {
+                    S_MIN = value;
+                    tvoutput.setText("S_MIN: " + value);
+                } else {
+                    S_MAX = value;
+                    tvoutput.setText("S_MAX: " + value);
+                }
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
+            }
+        });
+
+        mrbVal.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
+            @Override
+            public void onValueChanged(MultiSlider multiSlider,
+                                       MultiSlider.Thumb thumb,
+                                       int thumbIndex,
+                                       int value)
+            {
+                if (thumbIndex == 0) {
+                    V_MIN = value;
+                    tvoutput.setText("V_MIN: " + value);
+                } else {
+                    V_MAX = value;
+                    tvoutput.setText("V_MAX: " + value);
+                }
+                if (selectedFile == null) {
+                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                } else {
+                    updateImage(grabbedMatFrame);
+                }
+            }
+        });
+        /*
 
         mrbHue.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
             @Override
@@ -270,7 +360,7 @@ public class MainActivity extends Activity {
                 }
             }
         });
-
+*/
 /*
         SeekBar seekBarHmin = findViewById(R.id.seekBarHmin);
         SeekBar seekBarSmin = findViewById(R.id.seekBarSmin);

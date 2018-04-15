@@ -6,6 +6,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="multiSliderStyle">@style/Widget.MultiSlider</item>
+    </style>
+
+    <style name="Widget.MultiSlider" parent="android:Widget">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:thumb">@drawable/multislider_thumb_material</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

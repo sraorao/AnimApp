@@ -37,11 +37,23 @@
                 android:id="@+id/tvHue"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
                 android:text="Hue"
                 android:textSize="24sp" />
+            <io.apptik.widget.MultiSlider
+                android:id="@+id/mrbHue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/tvHue"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                app:thumbNumber="2"
+                app:stepsThumbsApart="1"
+                app:drawThumbsApart="true"
 
+                />
+            <!--
             <com.appyvet.materialrangebar.RangeBar xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/mrbHue"
                 android:layout_width="match_parent"
@@ -56,6 +68,7 @@
                 app:mrb_tickEnd="180"
                 app:mrb_tickInterval="1"
                 app:mrb_tickStart="0" />
+            -->
         </RelativeLayout>
 
         <RelativeLayout
@@ -69,11 +82,23 @@
                 android:id="@+id/tvSat"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
                 android:text="Sat"
                 android:textSize="24sp" />
+            <io.apptik.widget.MultiSlider
+                android:id="@+id/mrbSat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/tvSat"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                app:thumbNumber="2"
+                app:stepsThumbsApart="1"
+                app:drawThumbsApart="true"
 
+                />
+            <!--
             <com.appyvet.materialrangebar.RangeBar xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/mrbSat"
                 android:layout_width="match_parent"
@@ -88,6 +113,7 @@
                 app:mrb_tickEnd="255"
                 app:mrb_tickInterval="1"
                 app:mrb_tickStart="0" />
+                -->
         </RelativeLayout>
 
         <RelativeLayout
@@ -101,11 +127,23 @@
                 android:id="@+id/tvVal"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
                 android:text="Val"
                 android:textSize="24sp" />
+            <io.apptik.widget.MultiSlider
+                android:id="@+id/mrbVal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/tvVal"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                app:thumbNumber="2"
+                app:stepsThumbsApart="1"
+                app:drawThumbsApart="true"
 
+                />
+            <!--
             <com.appyvet.materialrangebar.RangeBar xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/mrbVal"
                 android:layout_width="match_parent"
@@ -120,6 +158,7 @@
                 app:mrb_tickEnd="255"
                 app:mrb_tickInterval="1"
                 app:mrb_tickStart="0" />
+                -->
         </RelativeLayout>
 
         <!--

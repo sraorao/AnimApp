@@ -209,6 +209,8 @@
     <color name="switch_thumb_normal_material_light">#fff1f1f1</color>
     <color name="tooltip_background_dark">#e6616161</color>
     <color name="tooltip_background_light">#e6FFFFFF</color>
+    <color name="transparent">#0000</color>
+    <color name="white">#ffffffff</color>
     <declare-styleable name="ActionBar"><attr name="navigationMode">
             
             <enum name="normal" value="0"/>
@@ -496,10 +498,11 @@
             <enum name="add" value="16"/>
         </attr></declare-styleable>
     <declare-styleable name="MenuView"><attr name="android:itemTextAppearance"/><attr name="android:horizontalDivider"/><attr name="android:verticalDivider"/><attr name="android:headerBackground"/><attr name="android:itemBackground"/><attr name="android:windowAnimationStyle"/><attr name="android:itemIconDisabledAlpha"/><attr format="boolean" name="preserveIconSpacing"/><attr format="reference" name="subMenuArrow"/></declare-styleable>
+    <declare-styleable name="MultiSlider"><attr format="integer" name="scaleMin"/><attr format="integer" name="scaleMax"/><attr format="integer" name="scaleStep"/><attr format="integer" name="stepsThumbsApart"/><attr format="boolean" name="drawThumbsApart"/><attr name="android:thumb"/><attr format="integer" name="thumbNumber"/><attr name="android:thumbOffset"/><attr format="integer" name="thumbValue1"/><attr format="integer" name="thumbValue2"/><attr format="reference" name="range1"/><attr format="reference" name="range2"/><attr name="android:track"/><attr name="android:focusable"/><attr format="reference" name="range"/><attr format="boolean" name="mirrorForRTL"/><attr format="color" name="thumbColor"/><attr format="color" name="trackColor"/><attr format="color" name="rangeColor"/><attr format="color" name="range1Color"/><attr format="color" name="range2Color"/></declare-styleable>
+    <declare-styleable name="MultiSliderTheme"><attr format="reference" name="multiSliderStyle"/></declare-styleable>
     <declare-styleable name="NavigationView"><attr name="android:background"/><attr name="android:fitsSystemWindows"/><attr name="android:maxWidth"/><attr name="elevation"/><attr format="reference" name="menu"/><attr format="color" name="itemIconTint"/><attr format="color" name="itemTextColor"/><attr format="reference" name="itemBackground"/><attr format="reference" name="itemTextAppearance"/><attr format="reference" name="headerLayout"/></declare-styleable>
     <declare-styleable name="PopupWindow"><attr format="boolean" name="overlapAnchor"/><attr name="android:popupBackground"/><attr name="android:popupAnimationStyle"/></declare-styleable>
     <declare-styleable name="PopupWindowBackgroundState"><attr format="boolean" name="state_above_anchor"/></declare-styleable>
-    <declare-styleable name="RangeBar"><attr format="float" name="mrb_tickStart"/><attr format="float" name="mrb_tickEnd"/><attr format="float" name="mrb_tickInterval"/><attr format="dimension" name="mrb_tickHeight"/><attr format="color" name="mrb_tickColor"/><attr format="dimension" name="mrb_barWeight"/><attr format="reference|color" name="mrb_rangeBarColor"/><attr format="dimension" name="mrb_selectorSize"/><attr format="reference|color" name="mrb_selectorBoundaryColor"/><attr format="dimension" name="mrb_selectorBoundarySize"/><attr format="reference|color" name="mrb_pinTextColor"/><attr format="reference|color" name="mrb_pinColor"/><attr format="dimension" name="mrb_pinPadding"/><attr format="dimension" name="mrb_pinMinFont"/><attr format="dimension" name="mrb_pinMaxFont"/><attr format="dimension" name="mrb_rangeBarPaddingBottom"/><attr format="reference|color" name="mrb_selectorColor"/><attr format="boolean" name="mrb_rangeBar"/><attr format="boolean" name="mrb_temporaryPins"/><attr format="dimension" name="mrb_connectingLineWeight"/><attr format="reference|color" name="mrb_connectingLineColor"/><attr format="dimension" name="mrb_pinRadius"/></declare-styleable>
     <declare-styleable name="RecycleListView"><attr format="dimension" name="paddingBottomNoButtons"/><attr format="dimension" name="paddingTopNoTitle"/></declare-styleable>
     <declare-styleable name="RecyclerView"><attr format="string" name="layoutManager"/><attr name="android:orientation"/><attr name="android:descendantFocusability"/><attr format="integer" name="spanCount"/><attr format="boolean" name="reverseLayout"/><attr format="boolean" name="stackFromEnd"/><attr format="boolean" name="fastScrollEnabled"/><attr format="reference" name="fastScrollVerticalThumbDrawable"/><attr format="reference" name="fastScrollVerticalTrackDrawable"/><attr format="reference" name="fastScrollHorizontalThumbDrawable"/><attr format="reference" name="fastScrollHorizontalTrackDrawable"/></declare-styleable>
     <declare-styleable name="ScrimInsetsFrameLayout"><attr format="color|reference" name="insetForeground"/></declare-styleable>
@@ -709,6 +712,9 @@
     <dimen name="item_touch_helper_max_drag_scroll_per_frame">20dp</dimen>
     <dimen name="item_touch_helper_swipe_escape_max_velocity">800dp</dimen>
     <dimen name="item_touch_helper_swipe_escape_velocity">120dp</dimen>
+    <dimen name="multislider_height_material">4dp</dimen>
+    <dimen name="multislider_range_height_material">2dp</dimen>
+    <dimen name="multislider_track_height_material">2dp</dimen>
     <dimen name="notification_action_icon_size">32dp</dimen>
     <dimen name="notification_action_text_size">13sp</dimen>
     <dimen name="notification_big_circle_margin">12dp</dimen>
@@ -851,18 +857,12 @@
         <item name="android:windowEnterAnimation">@anim/design_bottom_sheet_slide_in</item>
         <item name="android:windowExitAnimation">@anim/design_bottom_sheet_slide_out</item>
     </style>
-    <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
-    </style>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="multiSliderStyle">@style/Widget.MultiSlider</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="AppTheme.NoActionBar">
@@ -2399,5 +2399,9 @@
         <item name="passwordToggleDrawable">@drawable/design_password_eye</item>
         <item name="passwordToggleTint">@color/design_tint_password_toggle</item>
         <item name="passwordToggleContentDescription">@string/password_toggle_content_description</item>
+    </style>
+    <style name="Widget.MultiSlider" parent="android:Widget">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:thumb">@drawable/multislider_thumb_material</item>
     </style>
 </resources>
