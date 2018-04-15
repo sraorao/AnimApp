@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,12 +7,16 @@
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
-        android:layout_height="540px" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <TextView
+        android:id="@+id/tvRun"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:textSize="24dp"/>
+
 
         <Button
             android:id="@+id/btnScreen2Next"
@@ -20,6 +24,4 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:text="Next" />
-    </FrameLayout>
-
-</LinearLayout>
+</FrameLayout>

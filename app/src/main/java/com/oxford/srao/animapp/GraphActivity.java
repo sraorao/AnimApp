@@ -1,6 +1,7 @@
 package com.oxford.srao.animapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,13 +18,17 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -38,6 +43,7 @@ public class GraphActivity extends Activity {
     int framewidth;
     int frameheight;
     SeekBar seekBarFrame;
+    float scaleFactor = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +55,7 @@ public class GraphActivity extends Activity {
         fileDisplayName = getIntent().getStringExtra("fileDisplayName");
         framewidth = getIntent().getIntExtra("framewidth", 480);
         frameheight = getIntent().getIntExtra("frameheight", 270);
+        scaleFactor = getIntent().getFloatExtra("scaleFactor", 1);
 
         final GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
         gridLabel.setHorizontalAxisTitle("Y");
@@ -59,7 +66,7 @@ public class GraphActivity extends Activity {
         graphView.getViewport().setYAxisBoundsManual(true);
         graphView.getViewport().setMaxY(frameheight + 10);
         graphView.getViewport().setMinY(0);
-        Log.i(TAG, "X: " + framewidth + "Y: " + frameheight);
+        //Log.i(TAG, "X: " + framewidth + "Y: " + frameheight);
 
         findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +89,9 @@ public class GraphActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                List<String[]> csvLine = readCSVFromDownloadsFolder(fileDisplayName + ".csv");
+                createLineGraph(csvLine);
+                tvDistance.setText("Total distance: " + formatter.format(calculateDistance(csvLine)).toString());
             }
         });
         findViewById(R.id.btnReanalyse).setOnClickListener(new View.OnClickListener() {
@@ -94,7 +103,7 @@ public class GraphActivity extends Activity {
                     Toast.makeText(GraphActivity.this, "Enter an integer", Toast.LENGTH_SHORT).show();
                 }
                 List<String[]> csvLine = readCSVFromDownloadsFolder(fileDisplayName + ".csv");
-                Log.i(TAG, "totaldistance: " + calculateDistance(csvLine).toString());
+                //Log.i(TAG, "totaldistance: " + calculateDistance(csvLine).toString());
                 createLineGraph(csvLine);
 
                 tvDistance.setText("Total distance: " + formatter.format(calculateDistance(csvLine)).toString());
@@ -103,8 +112,6 @@ public class GraphActivity extends Activity {
 
 
         List<String[]> csvLine = readCSVFromDownloadsFolder(fileDisplayName + ".csv");
-        Log.i(TAG, "-------------------test");
-
         createLineGraph(csvLine);
         tvDistance.setText("Total distance: " + formatter.format(calculateDistance(csvLine)).toString());
         //Toast.makeText(GraphActivity.this, csvLine.get(0) + "," + csvLine.get(1), Toast.LENGTH_LONG);
@@ -114,7 +121,7 @@ public class GraphActivity extends Activity {
         List<String[]> csvLine = new ArrayList<>();
         String[] content = null;
         try {
-            Log.i(TAG, fileName + ": display name - " + fileDisplayName);
+            //Log.i(TAG, fileName + ": display name - " + fileDisplayName);
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(path, fileName);
             FileInputStream fileInputStream = new FileInputStream(file);
@@ -178,6 +185,33 @@ public class GraphActivity extends Activity {
             dblDataFrame[i][3] = Math.sqrt(sq(dblDataFrame[i][1] - dblDataFrame[i + 1][1]) + sq(dblDataFrame[i][2] - dblDataFrame[i + 1][2]));
             dblTotalDistance += dblDataFrame[i][3];
         }
+        //Log.i(TAG, "scaleFactor: " + scaleFactor);
+        String summary = Calendar.getInstance().getTime() + "," + fileDisplayName + "," +
+                numFrames + "," + dblTotalDistance + "," + dblTotalDistance*scaleFactor + "\n";
+        //Log.i(TAG, "summary: " + summary);
+        writeCSV(summary, "AnimApp_summary.csv", GraphActivity.this);
+        //Log.i(TAG, "summary written successfully");
         return(dblTotalDistance);
+    }
+
+    private void writeCSV(String data, String fileName, Context context) {
+        try {
+            //File path = context.getExternalFilesDir(null);
+            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File file = new File(path, fileName);
+            FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+            bufferedWriter.write(data);
+            bufferedWriter.close();
+            outputStreamWriter.close();
+            fileOutputStream.close();
+            //Log.i(TAG, "CSV written successfully");
+            //Log.i(TAG, "filename: " + file.getPath());
+        } catch(IOException e) {
+            Log.i(TAG, "CSV Writing failed" + e.toString());
+
+        }
     }
 }

@@ -5,18 +5,17 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo3ds_72dpi"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo3ds_72dpi"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.oxford.srao.animapp.MainActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,19 +24,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.oxford.srao.animapp.PlayVideoActivity"
+            android:name=".PlayVideoActivity"
             android:label="@string/title_activity_play_video"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.oxford.srao.animapp.PlayVideoImgActivity"
+            android:name=".PlayVideoImgActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.oxford.srao.animapp.GraphActivity"
+            android:name=".GraphActivity"
+            android:hardwareAccelerated="true"
             android:label="@string/title_activity_graph"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:hardwareAccelerated="true"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".CropFrameActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>
