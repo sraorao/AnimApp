@@ -1,5 +1,5 @@
 # AnimApp
-<img src="https://github.com/sraorao/AnimApp/logo3ds_72dpi.png" width="200" height="200" />
+![Logo]("logo3ds_72dpi_200px.png")
 
 
 # Installation
@@ -26,7 +26,7 @@ IMPORTANT: AnimApp currently works only with small video files (<80MB). If you h
 ..3. Click Next => A scatter plot of all positions is generated. Total distance is calculated, and this (along with the scaled distance in cm) is appended to AnimApp_summary.csv in your Downloads folder. All the points, along with the longest and shortest dimensions of the object and angle of rotation are also saved to the video.mp4.csv file (where video.mp4 was the name of the original video), again in the Downloads folder. Moving the slider or editing the number in the box limits the summary analysis to the displayed number of frames. Summary data are appended to AnimApp_summary.csv each time the frame number is modified.
 * If you have already run an analysis and would just like to look at the scatter plot or summary analysis, first load the **video** file in step 1 and click Analyse. 
 
-<img src="https://github.com/sraorao/AnimApp/instructions.png" width="200" height="1000" />
+![Logo]("instructions_150px.png")
 
 # Contributors
 
