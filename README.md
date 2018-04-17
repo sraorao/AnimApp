@@ -9,13 +9,13 @@
 * Consider running with `Play video` setting to off for faster processing, and turn it on only if you suspect from your resultant graph that the thresholding is incorrect.
 * Try using files in sample_videos folder to test. 
 
-IMPORTANT: AnimApp currently works only with small video files (<80MB). If you have larger files, try making them smaller by stripping the audio data and/or reducing the resolution (say, to 640 x 480). `ffmpeg` (https://www.ffmpeg.org/) is a very useful cross-platform tool to achieve this, as well as for converting video formats, croppping, etc. 
+IMPORTANT: AnimApp currently works only with small video files (<80MB). If you have larger files, try making them smaller by stripping the audio data and/or reducing the resolution (say, to 640 x 480). `ffmpeg` (https://www.ffmpeg.org/) is a very useful cross-platform tool to achieve this, as well as for converting video formats, croppping, etc. Alternatively, check out the desktop version of the app https://github.com/sraorao/opencv_animal_tracking, which is also recommended for batch processing a large number of videos.
 
 ## Devices tested
 
-* Nexus 5 (very slow, but works, with large files ~ 75 MB; works faster with smaller files)
+* Nexus 5 (very slow, but works, with large files ~ 75 MB; works faster with smaller files) (Android 6 Marshmallow)
 * Nexus 5X (emulated)
-* OnePlus 5T
+* OnePlus 5T (Android 8.0.0 Oreo)
 * Pixel 2 (emulated)
 
 ## Usage instructions
@@ -34,3 +34,23 @@ IMPORTANT: AnimApp currently works only with small video files (<80MB). If you h
 * Sam Olechnowicz (artwork, beta testing)
 * Patrick Kraetschmer (beta testing) @PatrickK 
 * Narayana Rao (code)
+
+## Acknowledgements
+
+This app depends on the JavaCV library (https://github.com/bytedeco/javacv), which is a Java wrapper around OpenCV, for video processing and analysis. MultiSlider (https://github.com/apptik/MultiSlider) and GraphView (https://github.com/appsthatmatter/GraphView) libraries have been used for UI components.
+
+## License
+
+```
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
