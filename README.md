@@ -21,9 +21,9 @@ IMPORTANT: AnimApp currently works only with small video files (<80MB). If you h
 ## Usage instructions
 
 * AnimApp can be typically run in 3 steps:
-..1. Load video => set thresholds => crop or set scale by drawing rectangle on image (also select real distance to set scale) => Decide whether to crop to rectangle => Decide whether to play video => Decide whether to play original or thresholded image
-..2. Click Next => Wait while video is analysed; frames are counted up and you will see "Done!" at the bottom of the screen.
-..3. Click Next => A scatter plot of all positions is generated. Total distance is calculated, and this (along with the scaled distance in cm) is appended to AnimApp_summary.csv in your Downloads folder. All the points, along with the longest and shortest dimensions of the object and angle of rotation are also saved to the video.mp4.csv file (where video.mp4 was the name of the original video), again in the Downloads folder. Moving the slider or editing the number in the box limits the summary analysis to the displayed number of frames. Summary data are appended to AnimApp_summary.csv each time the frame number is modified.
+  1. Load video => set thresholds => crop or set scale by drawing rectangle on image (also select real distance to set scale) => Decide whether to crop to rectangle => Decide whether to play video => Decide whether to play original or thresholded image
+  2. Click Next => Wait while video is analysed; frames are counted up and you will see "Done!" at the bottom of the screen.
+  3. Click Next => A scatter plot of all positions is generated. Total distance is calculated, and this (along with the scaled distance in cm) is appended to AnimApp_summary.csv in your Downloads folder. All the points, along with the longest and shortest dimensions of the object and angle of rotation are also saved to the video.mp4.csv file (where video.mp4 was the name of the original video), again in the Downloads folder. Moving the slider or editing the number in the box limits the summary analysis to the displayed number of frames. Summary data are appended to AnimApp_summary.csv each time the frame number is modified.
 * If you have already run an analysis and would just like to look at the scatter plot or summary analysis, first load the **video** file in step 1 and click Analyse. 
 
 ![Logo](instructions_150px.png)
