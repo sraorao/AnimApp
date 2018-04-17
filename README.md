@@ -4,8 +4,7 @@
 
 ## Installation
 
-* Open this page in your android browser, download the apk in javacv_tracking_android/app/release/ on to your device and follow instructions
-* Download sample files
+* Download the apk from https://github.com/sraorao/AnimApp/releases on to your device and follow instructions. You may have to change your phone's security settings to allow installation of apps from unknown sources. After installation, you will be asked if you want to grant read/write access, which is necessary for writing the csv data to memory.
 * Consider running with `Play video` setting to off for faster processing, and turn it on only if you suspect from your resultant graph that the thresholding is incorrect.
 * Try using files in sample_videos folder to test. 
 
@@ -26,7 +25,7 @@ IMPORTANT: AnimApp currently works only with small video files (<80MB). If you h
   3. Click Next => A scatter plot of all positions is generated. Total distance is calculated, and this (along with the scaled distance in cm) is appended to AnimApp_summary.csv in your Downloads folder. All the points, along with the longest and shortest dimensions of the object and angle of rotation are also saved to the video.mp4.csv file (where video.mp4 was the name of the original video), again in the Downloads folder. Moving the slider or editing the number in the box limits the summary analysis to the displayed number of frames. Summary data are appended to AnimApp_summary.csv each time the frame number is modified.
 * If you have already run an analysis and would just like to look at the scatter plot or summary analysis, first load the **video** file in step 1 and click Analyse. 
 
-![Logo](instructions_150px.png)
+![Instructions](instructions_150px.png)
 
 ## Contributors
 
