@@ -32,7 +32,7 @@ IMPORTANT: AnimApp currently works only with small video files (<80MB). If you h
 
 * Srinivasa Rao (code)
 * Sam Olechnowicz (artwork, beta testing)
-* Patrick Kraetschmer (beta testing) @PatrickK 
+* Patrick Kraetschmer (beta testing) 
 * Narayana Rao (code)
 
 ## Acknowledgements
