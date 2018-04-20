@@ -16,7 +16,7 @@ IMPORTANT: AnimApp currently works only with small video files (<80MB). If you h
 * Nexus 5X (emulated)
 * OnePlus 5T (Android 8.0.0 Oreo)
 * Pixel 2 (emulated)
-
+* Samsung Galaxy S5 (Android 6.0.1)
 ## Usage instructions
 
 * AnimApp can be typically run in 3 steps:
