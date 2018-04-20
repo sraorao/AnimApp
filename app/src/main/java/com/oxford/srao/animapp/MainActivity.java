@@ -27,11 +27,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.nononsenseapps.filepicker.FilePickerActivity;
-//import com.nononsenseapps.filepicker.Utils;
-
-//import com.appyvet.materialrangebar.RangeBar;
-
 import org.bytedeco.javacpp.opencv_core.*;
 import org.bytedeco.javacv.AndroidFrameConverter;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
@@ -40,7 +35,6 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -65,6 +59,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
 public class MainActivity extends Activity {
+
     private static InputStream stream;
     Uri selectedFile;
     Mat grabbedMatFrame;
@@ -82,6 +77,7 @@ public class MainActivity extends Activity {
     Point startPt = new Point(0, 0);
     Point endPt = new Point(0, 0);
     float scaleFactor = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +93,7 @@ public class MainActivity extends Activity {
         V_MAX = prefs.getInt("V_MAX", 30);
         Log.i(TAG, "prefs: " + H_MIN + "," + H_MAX + "," + S_MIN + "," + S_MAX + "," + V_MIN + "," + V_MAX );
 
+        // find views and initialize
         img = findViewById(R.id.image_view);
         final Switch switchCropVideo = findViewById(R.id.switchCropVideo);
         final NumberPicker npMeasurement = findViewById(R.id.npMeasurement);
@@ -104,13 +101,14 @@ public class MainActivity extends Activity {
         npMeasurement.setMaxValue(50);
         npMeasurement.setWrapSelectorWheel(true);
         final Switch switchPlayVideo = findViewById(R.id.switchPlayVideo);
+        tvoutput = findViewById(R.id.output);
 
+        // Request read/write permissions from user
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 1);
-        //img.setBackgroundColor(Color.parseColor("blue"));
-        tvoutput = findViewById(R.id.output);
 
+        // When "Open video" button is clicked, open file dialog
         findViewById(R.id.btnParseVideo).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -123,6 +121,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        // Process click-drag for rectangle selection inside imageview
         img.setOnTouchListener(new View.OnTouchListener(){
 
             @Override
@@ -164,6 +163,7 @@ public class MainActivity extends Activity {
                 return true;
             }});
 
+        // Go to next screen if Next is clicked; also send HSV values, crop and threshold settings to next activity
         findViewById(R.id.btnScreen1Next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,6 +196,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        // Go to GraphActivity if Analyse button is clicked; also send scale factor data to activity
         findViewById(R.id.btnAnalyse).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -212,6 +213,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        // if Threshold switch is flipped, update imageview
         final Switch switchShowThreshold = (Switch) findViewById(R.id.switchShowThreshold);
         switchShowThreshold.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -226,10 +228,10 @@ public class MainActivity extends Activity {
         });
 
 
+        // Initialize multisliders for HSV
         MultiSlider mrbHue = findViewById(R.id.mrbHue);
         MultiSlider mrbSat = findViewById(R.id.mrbSat);
         MultiSlider mrbVal = findViewById(R.id.mrbVal);
-
 
         mrbHue.setMax(179);
         mrbHue.setMin(0);
@@ -238,7 +240,8 @@ public class MainActivity extends Activity {
         mrbVal.setMax(255);
         mrbVal.setMin(0);
 
-        // Initialize thumbs at previously saved locations
+        // Initialize thumbs at previously saved locations (first remove all thumbs, then add them
+        // at desired locations
         mrbHue.removeThumb(0);
         mrbHue.removeThumb(0);
         mrbHue.addThumbOnPos(0, H_MIN);
@@ -254,6 +257,7 @@ public class MainActivity extends Activity {
         mrbVal.addThumbOnPos(0, V_MIN);
         mrbVal.addThumbOnPos(1, V_MAX);
 
+        // if HSV multisliders change, update image with new HSV values
         mrbHue.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
             @Override
             public void onValueChanged(MultiSlider multiSlider,
@@ -269,7 +273,7 @@ public class MainActivity extends Activity {
                     tvoutput.setText("H_MAX: " + value);
                 }
                 if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
                 } else {
                     updateImage(grabbedMatFrame);
                 }
@@ -291,7 +295,7 @@ public class MainActivity extends Activity {
                     tvoutput.setText("S_MAX: " + value);
                 }
                 if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
                 } else {
                     updateImage(grabbedMatFrame);
                 }
@@ -313,194 +317,14 @@ public class MainActivity extends Activity {
                     tvoutput.setText("V_MAX: " + value);
                 }
                 if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateImage(grabbedMatFrame);
-                }
-            }
-        });
-        /*
-
-        mrbHue.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
-            @Override
-            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
-                H_MIN = leftPinIndex;
-                H_MAX = rightPinIndex;
-                if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
                 } else {
                     updateImage(grabbedMatFrame);
                 }
             }
         });
 
-        mrbSat.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
-            @Override
-            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
-                S_MIN = leftPinIndex;
-                S_MAX = rightPinIndex;
-                if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateImage(grabbedMatFrame);
-                }
-            }
-        });
-
-        mrbVal.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
-            @Override
-            public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex, int rightPinIndex, String leftPinValue, String rightPinValue) {
-                V_MIN = leftPinIndex;
-                V_MAX = rightPinIndex;
-                Log.i(TAG, "V: " + V_MIN + ":" + V_MAX);
-                if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateImage(grabbedMatFrame);
-                }
-            }
-        });
-*/
-/*
-        SeekBar seekBarHmin = findViewById(R.id.seekBarHmin);
-        SeekBar seekBarSmin = findViewById(R.id.seekBarSmin);
-        SeekBar seekBarVmin = findViewById(R.id.seekBarVmin);
-        SeekBar seekBarHmax = findViewById(R.id.seekBarHmax);
-        SeekBar seekBarSmax = findViewById(R.id.seekBarSmax);
-        SeekBar seekBarVmax = findViewById(R.id.seekBarVmax);
-        seekBarHmin.setProgress(H_MIN);
-        seekBarSmin.setProgress(S_MIN);
-        seekBarVmin.setProgress(V_MIN);
-        seekBarHmax.setProgress(H_MAX);
-        seekBarSmax.setProgress(S_MAX);
-        seekBarVmax.setProgress(V_MAX);
-        seekBarHmin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                H_MIN = progress;
-                if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateImage(grabbedMatFrame);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //Toast.makeText(MainActivity.this, "Value changed to:" + H_MIN, Toast.LENGTH_SHORT).show();
-            }
-        });
-        seekBarSmin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                S_MIN = progress;
-                if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateImage(grabbedMatFrame);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //Toast.makeText(MainActivity.this, "Value changed to:" + S_MIN, Toast.LENGTH_SHORT).show();
-            }
-        });
-        seekBarVmin.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                V_MIN = progress;
-                if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateImage(grabbedMatFrame);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //Toast.makeText(MainActivity.this, "Value changed to:" + V_MIN, Toast.LENGTH_SHORT).show();
-            }
-        });
-        seekBarHmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                H_MAX = progress;
-                if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateImage(grabbedMatFrame);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //Toast.makeText(MainActivity.this, "Value changed to:" + H_MAX, Toast.LENGTH_SHORT).show();
-            }
-        });
-        seekBarSmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                S_MAX = progress;
-                if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateImage(grabbedMatFrame);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //Toast.makeText(MainActivity.this, "Value changed to:" + S_MAX, Toast.LENGTH_SHORT).show();
-            }
-        });
-        seekBarVmax.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                V_MAX = progress;
-                if (selectedFile == null) {
-                    Toast.makeText(MainActivity.this, "Please select a file!", Toast.LENGTH_LONG).show();
-                } else {
-                    updateImage(grabbedMatFrame);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //Toast.makeText(MainActivity.this, "Value changed to:" + V_MAX, Toast.LENGTH_SHORT).show();
-            }
-        });
-*/
+        // If number picker is changed, set scale factor
         npMeasurement.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
@@ -521,11 +345,7 @@ public class MainActivity extends Activity {
         if(requestCode==123 && resultCode==RESULT_OK) {
             selectedFile = data.getData(); //The uri with the location of the file
             Cursor cursor = null;
-            try {
-                /*Cursor cursor = getContentResolver().query(selectedFile, null, null, null, null);
-                fileDisplayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                cursor.close();*/
-
+            try { // get actual name of the video file
                 cursor = getContentResolver().query(selectedFile, null, null, null, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     fileDisplayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
@@ -540,8 +360,10 @@ public class MainActivity extends Activity {
                 cursor.close();
             }
 
+            // User information if file size of video is > 80 MB
             if (fileSize > 80) {
                 Log.i(TAG, "file is too big!");
+                selectedFile = null; //reset this so that btnAnalyse.onClick does not look for uri that does not exist
                 // setup the alert builder
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Large file");
@@ -556,50 +378,22 @@ public class MainActivity extends Activity {
                 return;
             }
             try {
-
                 stream = getContentResolver().openInputStream(selectedFile);
                 Toast.makeText(getApplicationContext(), selectedFile.toString(), Toast.LENGTH_SHORT).show();
                 grabFirstFrame(stream);
-                //updateImage(grabbedFrame);
-                //img.setImageBitmap(currentImage);
             } catch(Error e){
                 Log.i(TAG, "This file is too big!" + e.toString());
             } catch(Exception e) {
                 Log.i(TAG, "Something went wrong with reading video file!" + e.toString());
             }
 
-            // start new activity
-            //Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-            //intent.putExtra("selectedFile", getPath(getApplicationContext(), selectedFile));
-            //startActivity(intent);
-            //startVideoParsing(stream);
-
         }
     }
     public static InputStream getInStream() {
         return stream;
     }
-/*
-    private void startVideoParsing(final InputStream stream) {
-        Toast.makeText(MainActivity.this,
-                "playing..." + stream,
-                Toast.LENGTH_SHORT).show();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    showFirstFrame(stream);
-                } catch (FrameGrabber.Exception e) {
-                    e.printStackTrace();
-                } catch (FrameRecorder.Exception e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-*/
+
+    // fetch first frame of the video
     private void grabFirstFrame(InputStream stream) throws
             FrameGrabber.Exception,
             FrameRecorder.Exception,
@@ -607,15 +401,12 @@ public class MainActivity extends Activity {
 
         FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(stream);
         Frame frame;
-        //int count = 0;
         videoGrabber.start();
 
         frame = videoGrabber.grabFrame();
         OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
-        //OpenCVFrameConverter.ToIplImage iplConverter = new OpenCVFrameConverter.ToIplImage();
 
         grabbedMatFrame = matConverter.convert(frame.clone());
-
 
         float aspectRatioInverse = (float) videoGrabber.getImageHeight()/videoGrabber.getImageWidth();
         float aspectRatio = (float) videoGrabber.getImageWidth()/videoGrabber.getImageHeight();
@@ -628,12 +419,12 @@ public class MainActivity extends Activity {
         } else {
             newsize = new Size((int) (aspectRatio*height), height);
         }
-        //newsize = new Size(videoGrabber.getImageWidth()/4, videoGrabber.getImageHeight()/4);
         Log.i(TAG, "newsize: " + newsize.height() + "," + newsize.width() + "aspect ratio: " );
         resize(grabbedMatFrame, grabbedMatFrame, newsize);
         updateImage(grabbedMatFrame);
     }
 
+    // Threshold frame with opencv and update imageview with bitmap
     private void updateImage(Mat originalMatFrame) throws NullPointerException{
         Mat matFrame = originalMatFrame.clone();
         long startRenderImage = System.nanoTime();
@@ -645,18 +436,13 @@ public class MainActivity extends Activity {
         cvtColor(matFrame, matHSV, COLOR_BGR2HSV);
         Mat destMat = new Mat();
 
-
         inRange(matHSV,
                 new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)),
                 new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)),
                 destMat);
 
-        //mask = cv2.bitwise_or(mask1, mask2)
-        //CvMemStorage memory=CvMemStorage.create();
-        //CvSeq cvSeq = new CvSeq();
         MatVector contours = new MatVector();
         Mat bestContour = new Mat();
-        //cvFindContours(destMat.clone(), memory, cvSeq, Loader.sizeof(CvContour.class), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
         findContours(destMat.clone(), contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
         Scalar color = new Scalar(239, 117, 94, 5);
         double maxVal = 0;
@@ -670,7 +456,6 @@ public class MainActivity extends Activity {
             }
         }
         bestContour = contours.get(maxValIdx);
-        //iplConverter.convert(matFrame);
         Moments bestMoments = new Moments();
         try {
             bestMoments = moments(bestContour);
@@ -687,8 +472,7 @@ public class MainActivity extends Activity {
         } catch (NullPointerException e) {
             //
         }
-        //drawContours(matFrame, contours, maxValIdx, color);
-        //Mat blackMat = new Mat();
+
         Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
         int intRadius = (int) radius[0];
         Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
@@ -701,16 +485,11 @@ public class MainActivity extends Activity {
             currentImage = bitmapConverter.convert(matConverter.convert(matFrame));
         }
 
-
-//            final ArrayList<GestureBean> rst = Predictor.predict(currentImage, this);
         long endRenderImage = System.nanoTime();
         final Float renderFPS = 1000000000.0f / (endRenderImage - startRenderImage + 1);
-        //return(currentImage);
         img.setImageBitmap(currentImage);
         //Log.i(TAG, "frame" + frame.imageHeight + ":" + frame.imageWidth);
         Log.i(TAG, "matFrame" + matFrame.rows() + ":" + matFrame.cols());
-
-
     }
 
     @Override
@@ -723,24 +502,20 @@ public class MainActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    // permission granted
                 } else {
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // permission denied
                     Toast.makeText(MainActivity.this, "Permission denied to write your External storage", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
+    // Make new point (called when imageview is touch-dragged
     private Point projectXY(ImageView iv, Mat mat, int x, int y){
-        //handle if x or y outside ImageView
+        // handle if x or y outside ImageView
         if(x > iv.getWidth()){
             x = iv.getWidth();
         } else if (y > iv.getHeight()) {
@@ -755,9 +530,9 @@ public class MainActivity extends Activity {
         int projectedY = (int)((double)y * ((double)mat.rows()/(double)iv.getHeight()));
 
         return new Point(projectedX, projectedY);
-
     }
 
+    // Draw rectangle from start and end points of touch-drag on imageview
     private void drawRectangle(Mat originalMatFrame) {
         matFrame = originalMatFrame.clone();
         Bitmap currentImage;
@@ -769,8 +544,6 @@ public class MainActivity extends Activity {
             rectangle(matFrame, startPt, endPt, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN);
 
             currentImage = bitmapConverter.convert(matConverter.convert(matFrame));
-            //selectView.setImageBitmap(currentImage);
-
 
             img.setImageBitmap(currentImage);
         } catch (NullPointerException e) {
@@ -779,6 +552,7 @@ public class MainActivity extends Activity {
         }
     }
 
+    // When activity is stopped, store HSV values in SharedPreferences
     @Override
     public void onStop(){
         super.onStop();
@@ -793,7 +567,5 @@ public class MainActivity extends Activity {
         Log.i(TAG, "prefs: " + H_MIN + "," + H_MAX + "," + S_MIN + "," + S_MAX + "," + V_MIN + "," + V_MAX );
         editor.apply();
     }
-
-
 }
 

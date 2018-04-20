@@ -51,9 +51,7 @@ public class PlayVideoImgActivity extends Activity {
     public String selectedFile;
     InputStream stream;
     ImageView img;
-    //Bitmap currentImage;
 
-    //public Uri uri;
     public int H_MIN;
     public int S_MIN;
     public int V_MIN;
@@ -70,7 +68,6 @@ public class PlayVideoImgActivity extends Activity {
     float scaleFactor = 1;
     int count;
 
-    //opencv_core.Mat grabbedMatFrame;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,19 +88,6 @@ public class PlayVideoImgActivity extends Activity {
                 }
             }
         });
-        /*
-        img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PlayVideoImgActivity.this, GraphActivity.class); // replace PlayVideoActivity with PlayVideoImgActivity for ImageView version
-                intent.putExtra("fileDisplayName", fileDisplayName);
-                intent.putExtra("framewidth", newsize.width());
-                intent.putExtra("frameheight", newsize.height());
-                intent.putExtra("scaleFactor", scaleFactor);
-                PlayVideoImgActivity.this.startActivity(intent);
-            }
-        });
-        */
 
         selectedFile = getIntent().getStringExtra("uri");
         H_MIN = getIntent().getIntExtra("Hmin", 0);
@@ -121,7 +105,6 @@ public class PlayVideoImgActivity extends Activity {
         playVideo = getIntent().getBooleanExtra("playVideo", false);
         try {
             stream = getContentResolver().openInputStream(Uri.parse(selectedFile));
-            //Toast.makeText(getApplicationContext(), stream.toString(), Toast.LENGTH_LONG).show();
         } catch(Exception e){
 
         }
@@ -129,37 +112,8 @@ public class PlayVideoImgActivity extends Activity {
 
     }
 
-/*
-    public static InputStream getInStream() {
-        return stream;
-    }
-
-    public void performFileSearch() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType("video/*");
-        startActivityForResult(intent, READ_REQUEST_CODE);
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent resultData) {
-        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Uri uri = null;
-            if (resultData != null) {
-                uri = resultData.getData();
-                //Log.i(TAG, "Uri: " + uri.toString());
-                String path = uri.getPath();
-                Log.i(TAG, "Uri: " + path);
-                //showImage(uri);
-                startVideoParsing(uri.toString());
-            }
-        }
-    }
-*/
-
+    // new thread to run playVideo()
     private void startVideoParsing(final InputStream stream) {
-        //Toast.makeText(PlayVideoImgActivity.this,
-        //        "playing..." + stream,
-        //        Toast.LENGTH_SHORT).show();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -188,7 +142,6 @@ public class PlayVideoImgActivity extends Activity {
         AndroidFrameConverter bitmapConverter = new AndroidFrameConverter();
         OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
         OpenCVFrameConverter.ToIplImage iplConverter = new OpenCVFrameConverter.ToIplImage();
-        //newsize = new Size(videoGrabber.getImageWidth()/4, videoGrabber.getImageHeight()/4);
         Rect roi = new Rect(startPt, endPt);
         Mat matHSV = new Mat();
         Mat destMat = new Mat();
@@ -200,7 +153,8 @@ public class PlayVideoImgActivity extends Activity {
         if (file.exists()) {
             boolean deleted = file.delete();
         }
-
+        // column names for csv file
+        writeCSV("frame,x,y,height,width,angle\n", fileDisplayName + ".csv", PlayVideoImgActivity.this);
         while (true) {
             try {
                 frame = videoGrabber.grabFrame();
@@ -225,16 +179,11 @@ public class PlayVideoImgActivity extends Activity {
                         new Mat(1, 1, CV_32SC4, new Scalar(H_MIN, S_MIN, V_MIN, 0)),
                         new Mat(1, 1, CV_32SC4, new Scalar(H_MAX, S_MAX, V_MAX, 0)),
                         destMat);
-                //mask = cv2.bitwise_or(mask1, mask2)
-                //CvMemStorage memory=CvMemStorage.create();
-                //CvSeq cvSeq = new CvSeq();
+
                 MatVector contours = new MatVector();
                 Mat bestContour = new Mat();
-                //cvFindContours(destMat.clone(), memory, cvSeq, Loader.sizeof(CvContour.class), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
                 findContours(destMat.clone(), contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-                //if (contours == null) {
-                //    continue;
-                //}
+
                 Scalar color = new Scalar(239, 117, 94, 5);
                 double maxVal = 0;
                 int maxValIdx = 0;
@@ -247,12 +196,7 @@ public class PlayVideoImgActivity extends Activity {
                     }
                 }
                 bestContour = contours.get(maxValIdx);
-                //Moments bestMoments = new Moments();
-                //try {
-                //    bestMoments = moments(bestContour);
-                //} catch(NullPointerException e) {
-                    //
-                //}
+
                 //Log.i("moments", "" + bestMoments.m00());
                 Point2f center = new Point2f();
                 float[] radius = new float[1];
@@ -267,8 +211,6 @@ public class PlayVideoImgActivity extends Activity {
                 } catch (NullPointerException e) {
                     minRect = null;
                 }
-
-
                 //Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
                 outputCSV = count + "," + center.x() + "," + center.y()  + "," +
                         minRect.size().height()  + "," + minRect.size().width()  + "," + minRect.angle() + "\n";
@@ -282,7 +224,15 @@ public class PlayVideoImgActivity extends Activity {
                 } else {
                     displayFrame = matFrame;
                 }
-            } catch (Exception e) {
+            } catch (Exception e) { // continue loop if no contour found, after updating frame count
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView tvRun;
+                        tvRun = findViewById(R.id.tvRun);
+                        tvRun.setText("Frame: " + count + ": object missing");
+                    }
+                });
                 continue;
             }
             runOnUiThread(new Runnable() {
@@ -304,9 +254,6 @@ public class PlayVideoImgActivity extends Activity {
                     }
                 });
             }
-
-
-
         }
         done = true;
         runOnUiThread(new Runnable() {
@@ -317,14 +264,12 @@ public class PlayVideoImgActivity extends Activity {
                 tvRun.setText("Done!");
             }
         });
-
-
         //Log.i(TAG, "test_output: " + outputCSV);
     }
 
+    // Writes line to csv file
     private void writeCSV(String data, String fileName, Context context) {
         try {
-            //File path = context.getExternalFilesDir(null);
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(path, fileName);
             FileOutputStream fileOutputStream = new FileOutputStream(file, true);

@@ -20,6 +20,7 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/logo3ds_72dpi"
         android:supportsRtl="true"
+        android:testOnly="true"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.oxford.srao.animapp.MainActivity"
@@ -56,5 +57,7 @@
             android:name="android.arch.lifecycle.VERSION"
             android:value="27.0.0-SNAPSHOT" />
     </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

@@ -44,6 +44,7 @@ public class GraphActivity extends Activity {
     int frameheight;
     SeekBar seekBarFrame;
     float scaleFactor = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +67,6 @@ public class GraphActivity extends Activity {
         graphView.getViewport().setYAxisBoundsManual(true);
         graphView.getViewport().setMaxY(frameheight + 10);
         graphView.getViewport().setMinY(0);
-        //Log.i(TAG, "X: " + framewidth + "Y: " + frameheight);
 
         findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +125,6 @@ public class GraphActivity extends Activity {
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(path, fileName);
             FileInputStream fileInputStream = new FileInputStream(file);
-            //InputStream inputStream = getAssets().open("local.cvs");
             BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream));
             String line = "";
             while((line = br.readLine()) != null){
@@ -140,6 +139,8 @@ public class GraphActivity extends Activity {
     }
 
     private void createLineGraph(List<String[]> result){
+        result.remove(0); // remove column names
+        //Log.i(TAG, "result: " + result.size());
         graphView.removeAllSeries();
         if (numFrames == 0 || numFrames > result.size()) {
             numFrames = result.size();
@@ -149,13 +150,13 @@ public class GraphActivity extends Activity {
         }
         DataPoint[] dataPoints = new DataPoint[numFrames];
         for (int i = 0; i < numFrames; i++){
+            Log.i(TAG, "row: " + result.get(i)[1] + ":" + i);
             String [] rows = result.get(i);
             //Log.d(TAG, "Output " + Double.parseDouble(rows[1]) + " " + Double.parseDouble(rows[2]));
             dataPoints[i] = new DataPoint(Double.parseDouble(rows[1]), Double.parseDouble(rows[2]));
         }
         PointsGraphSeries<DataPoint> series = new PointsGraphSeries<>(dataPoints);
         series.setSize(5);
-        //LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
         graphView.addSeries(series);
     }
 
@@ -179,7 +180,6 @@ public class GraphActivity extends Activity {
             dblDataFrame[i][0] = Double.parseDouble(rows[0]);
             dblDataFrame[i][1] = Double.parseDouble(rows[1]);
             dblDataFrame[i][2] = Double.parseDouble(rows[2]);
-            //dblTotalDistance += dblDataFrame[i][3];
         }
         for (int i = 0; i < numFrames - 1; i++) {
             dblDataFrame[i][3] = Math.sqrt(sq(dblDataFrame[i][1] - dblDataFrame[i + 1][1]) + sq(dblDataFrame[i][2] - dblDataFrame[i + 1][2]));
@@ -187,8 +187,14 @@ public class GraphActivity extends Activity {
         }
         //Log.i(TAG, "scaleFactor: " + scaleFactor);
         String summary = Calendar.getInstance().getTime() + "," + fileDisplayName + "," +
-                numFrames + "," + dblTotalDistance + "," + dblTotalDistance*scaleFactor + "\n";
+                numFrames + "," + dblTotalDistance + "," + dblTotalDistance*scaleFactor + "," + scaleFactor + "\n";
         //Log.i(TAG, "summary: " + summary);
+        // write column names if writing file for the first time
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(path, "AnimApp_summary.csv");
+        if (!file.exists()) {
+            writeCSV("time,filename,number_of_frames,total_distance_px,total_distance_cm,scale_factor\n", "AnimApp_summary.csv", GraphActivity.this);
+        }
         writeCSV(summary, "AnimApp_summary.csv", GraphActivity.this);
         //Log.i(TAG, "summary written successfully");
         return(dblTotalDistance);
@@ -196,7 +202,6 @@ public class GraphActivity extends Activity {
 
     private void writeCSV(String data, String fileName, Context context) {
         try {
-            //File path = context.getExternalFilesDir(null);
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(path, fileName);
             FileOutputStream fileOutputStream = new FileOutputStream(file, true);
