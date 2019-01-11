@@ -4,6 +4,7 @@
 
 ## Installation
 
+* **AnimApp is [now available on the Google Play Store](https://play.google.com/store/apps/details?id=com.oxford.srao.animapp), and is the recommended installation method**. Please use the following method if this is not possible, or if you would like to try a more recent release.
 * Download the apk from https://github.com/sraorao/AnimApp/releases on to your device and follow instructions. You may have to change your phone's security settings to allow installation of apps from unknown sources. After installation, you will be asked if you want to grant read/write access, which is necessary for writing the csv data to memory.
 * Consider running with `Play video` setting to off for faster processing, and turn it on only if you suspect from your resultant graph that the thresholding is incorrect.
 * Try using files in sample_videos folder to test. 
