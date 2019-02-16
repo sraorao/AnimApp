@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.oxford.srao.animapp">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.CAMERA"
+        tools:node="remove" />
 
     <application
         android:allowBackup="true"
@@ -13,7 +17,12 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/logo3ds_72dpi"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".TimeBinsActivity" />
+        <activity
+            android:name=".PresetsActivity"
+            android:label="@string/title_activity_presets"
+            android:theme="@style/NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
@@ -38,9 +47,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CropFrameActivity" />
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

@@ -67,6 +67,7 @@ public class PlayVideoImgActivity extends Activity {
     Point endPt = new Point(0, 0);
     float scaleFactor = 1;
     int count;
+    float resizeFactor = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,8 @@ public class PlayVideoImgActivity extends Activity {
         scaleFactor = getIntent().getFloatExtra("scaleFactor", 1);
         newsize = new Size(getIntent().getIntExtra("width", 640), getIntent().getIntExtra("height", 480));
         playVideo = getIntent().getBooleanExtra("playVideo", false);
+        resizeFactor = getIntent().getFloatExtra("resizeFactor", 1);
+
         try {
             stream = getContentResolver().openInputStream(Uri.parse(selectedFile));
         } catch(Exception e){
@@ -184,6 +187,10 @@ public class PlayVideoImgActivity extends Activity {
                 Mat bestContour = new Mat();
                 findContours(destMat.clone(), contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
+                if (contours.empty()) { // throw exception; catch block handles it noting object is missing
+                    throw new RuntimeException("No contours found in this frame");
+                }
+
                 Scalar color = new Scalar(239, 117, 94, 5);
                 double maxVal = 0;
                 int maxValIdx = 0;
@@ -212,8 +219,8 @@ public class PlayVideoImgActivity extends Activity {
                     minRect = null;
                 }
                 //Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
-                outputCSV = count + "," + center.x() + "," + center.y()  + "," +
-                        minRect.size().height()  + "," + minRect.size().width()  + "," + minRect.angle() + "\n";
+                outputCSV = count + "," + center.x()*resizeFactor + "," + center.y()*resizeFactor  + "," +
+                        minRect.size().height()*resizeFactor  + "," + minRect.size().width()*resizeFactor  + "," + minRect.angle() + "\n";
                 writeCSV(outputCSV, fileDisplayName + ".csv", PlayVideoImgActivity.this);
                 //Log.i(TAG, "outputCSV:" + outputCSV);
                 int intRadius = (int) radius[0];
@@ -230,6 +237,7 @@ public class PlayVideoImgActivity extends Activity {
                     public void run() {
                         TextView tvRun;
                         tvRun = findViewById(R.id.tvRun);
+                        Log.i(TAG, "Frame: " + count + ": object missing");
                         tvRun.setText("Frame: " + count + ": object missing");
                     }
                 });

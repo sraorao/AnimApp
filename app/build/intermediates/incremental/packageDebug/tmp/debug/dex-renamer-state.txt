@@ -1,4 +1,10 @@
-#Fri Apr 20 16:56:42 BST 2018
-base.0=/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/transforms/dexMerger/debug/0
+#Fri Feb 15 18:07:53 GMT 2019
+path.2=classes2.dex
+path.1=classes.dex
 path.0=classes.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
 renamed.0=classes.dex
+base.2=/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/dex/debug/mergeExtDexDebug/out
+base.1=/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/dex/debug/mergeExtDexDebug/out
+base.0=/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/dex/debug/mergeProjectDexDebug/out

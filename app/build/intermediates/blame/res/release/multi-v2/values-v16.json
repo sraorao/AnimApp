@@ -4,17 +4,7 @@
             "outputFile": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/incremental/mergeReleaseResources/merged.dir/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/support-compat-26.1.0.aar/e0da15c50eed5f8cfdbaff45de53db60/res/values-v16/values-v16.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "65",
-                        "endOffsets": "116"
-                    }
-                },
-                {
-                    "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/values-v16/values-v16.xml",
+                    "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/dcfb88e1ddb0e4da7a77e4d775a0e197/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -30,6 +20,16 @@
                         "endLines": "6",
                         "endColumns": "12",
                         "endOffsets": "289"
+                    }
+                },
+                {
+                    "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/53353156f744f581f3cebbd740fcab27/res/values-v16/values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "65",
+                        "endOffsets": "116"
                     }
                 }
             ]

@@ -3,8 +3,10 @@ package com.oxford.srao.animapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -25,9 +27,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -44,6 +48,8 @@ public class GraphActivity extends Activity {
     int frameheight;
     SeekBar seekBarFrame;
     float scaleFactor = 1;
+    double[] dblDistanceBins;
+    int numBins;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +64,7 @@ public class GraphActivity extends Activity {
         frameheight = getIntent().getIntExtra("frameheight", 270);
         scaleFactor = getIntent().getFloatExtra("scaleFactor", 1);
 
+
         final GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
         gridLabel.setHorizontalAxisTitle("Y");
         graphView.getViewport().setXAxisBoundsManual(true);
@@ -67,6 +74,7 @@ public class GraphActivity extends Activity {
         graphView.getViewport().setYAxisBoundsManual(true);
         graphView.getViewport().setMaxY(frameheight + 10);
         graphView.getViewport().setMinY(0);
+        graphView.setBackgroundColor(getResources().getColor(android.R.color.white));
 
         findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +83,18 @@ public class GraphActivity extends Activity {
                 GraphActivity.this.startActivity(intent);
             }
         });
+
+        findViewById(R.id.btnTimeBins).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GraphActivity.this, TimeBinsActivity.class); // replace PlayVideoActivity with PlayVideoImgActivity for ImageView version
+                Bundle b = new Bundle();
+                b.putDoubleArray("TimeBins", dblDistanceBins);
+                intent.putExtras(b);
+                GraphActivity.this.startActivity(intent);
+            }
+        });
+
         seekBarFrame.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -110,7 +130,12 @@ public class GraphActivity extends Activity {
             }
         });
 
-
+        findViewById(R.id.fabShare).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                graphView.takeSnapshotAndShare(GraphActivity.this, "scatterplot", "AnimApp plot");
+            }
+        });
         List<String[]> csvLine = readCSVFromDownloadsFolder(fileDisplayName + ".csv");
         createLineGraph(csvLine);
         tvDistance.setText("Total distance: " + formatter.format(calculateDistance(csvLine)).toString());
@@ -149,11 +174,29 @@ public class GraphActivity extends Activity {
             seekBarFrame.setProgress(result.size());
         }
         DataPoint[] dataPoints = new DataPoint[numFrames];
+        double[][] dataArray = new double[numFrames][2];
         for (int i = 0; i < numFrames; i++){
             Log.i(TAG, "row: " + result.get(i)[1] + ":" + i);
             String [] rows = result.get(i);
             //Log.d(TAG, "Output " + Double.parseDouble(rows[1]) + " " + Double.parseDouble(rows[2]));
-            dataPoints[i] = new DataPoint(Double.parseDouble(rows[1]), Double.parseDouble(rows[2]));
+            dataArray[i][0] = Double.parseDouble(rows[1]);
+            dataArray[i][1] = Double.parseDouble(rows[2]);
+            //dataPoints[i] = new DataPoint(Double.parseDouble(rows[2]), Double.parseDouble(rows[1]));
+        }
+
+        // sort array which is requirement for GraphView 4.2.2
+        Log.i(TAG, "dataArray before sorting: " + dataArray[1][0] + dataArray[1][1]);
+        java.util.Arrays.sort(dataArray, new java.util.Comparator<double[]>() {
+            public int compare(double[] a, double[] b) {
+                return Double.compare(a[0], b[0]);
+            }
+        });
+        Log.i(TAG, "dataArray after sorting:" + dataArray[1][0] + dataArray[1][1]);
+
+        // assign sorted array to datapoints
+        for (int i = 0; i < numFrames; i++){
+            Log.i(TAG, "row: " + result.get(i)[1] + ":" + i);
+            dataPoints[i] = new DataPoint(dataArray[i][0], dataArray[i][1]);
         }
         PointsGraphSeries<DataPoint> series = new PointsGraphSeries<>(dataPoints);
         series.setSize(5);
@@ -167,6 +210,12 @@ public class GraphActivity extends Activity {
     private Double calculateDistance(List<String[]> result){
         Double[][] dblDataFrame = new Double[result.size()][4];
         Double dblTotalDistance = 0.0;
+        // processing for bins graph
+        // TODO: move this to TimeBinsActivity
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int numBins = prefs.getInt("Bins", 10);
+        Log.i(TAG, "Binwidth:" + numBins);
+        dblDistanceBins = new double[(numFrames/numBins) + 1];
 
         if (numFrames == 0 || numFrames > result.size()) {
             numFrames = result.size();
@@ -184,6 +233,23 @@ public class GraphActivity extends Activity {
         for (int i = 0; i < numFrames - 1; i++) {
             dblDataFrame[i][3] = Math.sqrt(sq(dblDataFrame[i][1] - dblDataFrame[i + 1][1]) + sq(dblDataFrame[i][2] - dblDataFrame[i + 1][2]));
             dblTotalDistance += dblDataFrame[i][3];
+        }
+        Log.i(TAG, "total distance calculated successfully");
+
+        // processing for bins graph
+        // TODO: move this to TimeBinsActivity
+        int dfIndex = 0;
+        for (int i = 0; i < dblDistanceBins.length; i++) { // NOT rolling sum
+            dblDistanceBins[i] = 0.0;
+            for (int j = 0; j < numBins; j++) {
+                dfIndex = (numBins * i) + j;
+                //Log.i(TAG, "dfIndex:" + dfIndex);
+                //Log.i(TAG, "i:j=" + i + ":" + j);
+                if (dfIndex >= numFrames - 1) {
+                    break;}
+                dblDistanceBins[i] += dblDataFrame[dfIndex][3];
+            }
+            //Log.i(TAG, "distancebins: " + dblDistanceBins[i] + ":" + dfIndex + ":" + i + ":" + dblDistanceBins.length);
         }
         //Log.i(TAG, "scaleFactor: " + scaleFactor);
         String summary = Calendar.getInstance().getTime() + "," + fileDisplayName + "," +
@@ -219,4 +285,6 @@ public class GraphActivity extends Activity {
 
         }
     }
+
+
 }

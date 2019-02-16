@@ -202,26 +202,27 @@ public class CanvasView extends View {
             findContours(destMat, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
             double maxVal = 0;
             int maxValIdx = 0;
-
-            for (int i = 0; i < contours.size(); i++) {
-                double eachContourArea = contourArea(contours.get(i));
-                if (maxVal < eachContourArea) {
-                    maxVal = eachContourArea;
-                    maxValIdx = i;
+            if (!contours.empty()) { // draw circle only if at least one contour was found
+                for (int i = 0; i < contours.size(); i++) {
+                    double eachContourArea = contourArea(contours.get(i));
+                    if (maxVal < eachContourArea) {
+                        maxVal = eachContourArea;
+                        maxValIdx = i;
+                    }
                 }
+                bestContour = contours.get(maxValIdx);
+                //iplConverter.convert(matFrame);
+                //opencv_core.Moments bestMoments = new opencv_core.Moments();
+                //bestMoments = moments(bestContour);
+                //Log.i("moments", "" + bestMoments.m00());
+                minEnclosingCircle(bestContour, center, radius);
+                //drawContours(matFrame, contours, maxValIdx, color);
+                //Mat blackMat = new Mat();
+                Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
+                int intRadius = (int) radius[0];
+                opencv_core.Point pointCenter = new opencv_core.Point(Math.round(center.x()), Math.round(center.y()));;
+                circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
             }
-            bestContour = contours.get(maxValIdx);
-            //iplConverter.convert(matFrame);
-            //opencv_core.Moments bestMoments = new opencv_core.Moments();
-            //bestMoments = moments(bestContour);
-            //Log.i("moments", "" + bestMoments.m00());
-            minEnclosingCircle(bestContour, center, radius);
-            //drawContours(matFrame, contours, maxValIdx, color);
-            //Mat blackMat = new Mat();
-            Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
-            int intRadius = (int) radius[0];
-            opencv_core.Point pointCenter = new opencv_core.Point(Math.round(center.x()), Math.round(center.y()));;
-            circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
             if (isChecked) {
                 b = bitmapConverter.convert(matConverter.convert(destMat));
                 //displayFrame = destMat;

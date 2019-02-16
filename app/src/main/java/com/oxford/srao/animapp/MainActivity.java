@@ -3,6 +3,7 @@ package com.oxford.srao.animapp;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -10,13 +11,18 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -27,6 +33,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.opencv_core.*;
 import org.bytedeco.javacv.AndroidFrameConverter;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
@@ -35,8 +42,13 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
 
 import io.apptik.widget.MultiSlider;
 
@@ -58,7 +70,7 @@ import static org.bytedeco.javacpp.opencv_imgproc.moments;
 import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
 import static org.bytedeco.javacpp.opencv_imgproc.resize;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     private static InputStream stream;
     Uri selectedFile;
@@ -66,17 +78,19 @@ public class MainActivity extends Activity {
     Mat matFrame;
     ImageView img;
     TextView tvoutput;
+    SeekBar seekBar;
     String fileDisplayName = "";
-    int H_MIN = 0;
-    int S_MIN = 0;
-    int V_MIN = 0;
-    int H_MAX = 180;
-    int S_MAX = 255;
-    int V_MAX = 30;
+    int H_MIN;
+    int S_MIN;
+    int V_MIN;
+    int H_MAX;
+    int S_MAX;
+    int V_MAX;
     Size newsize;
     Point startPt = new Point(0, 0);
     Point endPt = new Point(0, 0);
     float scaleFactor = 1;
+    float resizeFactor = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,16 +116,23 @@ public class MainActivity extends Activity {
         npMeasurement.setWrapSelectorWheel(true);
         final Switch switchPlayVideo = findViewById(R.id.switchPlayVideo);
         tvoutput = findViewById(R.id.output);
+        seekBar = findViewById(R.id.seekBar);
+
+        // initialise options menu
+
 
         // Request read/write permissions from user
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 1);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         // When "Open video" button is clicked, open file dialog
         findViewById(R.id.btnParseVideo).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                seekBar.setProgress(0); // reset seekbar
                 //performFileSearch();
                 Intent intent = new Intent()
                         .setType("*/*")
@@ -121,6 +142,35 @@ public class MainActivity extends Activity {
             }
         });
 
+
+        // seekbar listener
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                tvoutput.setText(String.valueOf(progress));
+                Log.i(TAG, "seekBar progress:" + String.valueOf(progress));
+                try {
+                    stream = getContentResolver().openInputStream(selectedFile);
+                    //Toast.makeText(getApplicationContext(), selectedFile.toString(), Toast.LENGTH_SHORT).show();
+                    grabFirstFrame(stream);
+                } catch(Error e){
+                    Log.i(TAG, "File seeking failed!" + e.toString());
+                } catch(Exception e) {
+                    //seekBar.setMax(progress - 1);
+                    Log.i(TAG, "File seeking failed!" + e.toString());
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         // Process click-drag for rectangle selection inside imageview
         img.setOnTouchListener(new View.OnTouchListener(){
 
@@ -191,6 +241,10 @@ public class MainActivity extends Activity {
                     intent.putExtra("width", newsize.width());
                     intent.putExtra("height", newsize.height());
                     intent.putExtra("playVideo", switchPlayVideo.isChecked());
+                    intent.putExtra("resizeFactor", resizeFactor);
+                    // write config file in Downloads folder
+                    String configText = H_MIN + "," + H_MAX + "," + S_MIN + "," + S_MAX + "," + V_MIN + "," + V_MAX;
+                    writeTEXT(configText, fileDisplayName + ".settings.txt", MainActivity.this);
                     MainActivity.this.startActivity(intent);
                 }
             }
@@ -398,15 +452,43 @@ public class MainActivity extends Activity {
             FrameGrabber.Exception,
             FrameRecorder.Exception,
             IOException, NullPointerException {
+        Log.i(TAG, "stream:" + stream.toString());
 
         FFmpegFrameGrabber videoGrabber = new FFmpegFrameGrabber(stream);
-        Frame frame;
-        videoGrabber.start();
-
-        frame = videoGrabber.grabFrame();
         OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
 
+        Frame frame;
+        videoGrabber.start();
+        int count = 0;
+        int length_frames = videoGrabber.getLengthInVideoFrames();
+
+        videoGrabber.setFrameNumber(seekBar.getProgress()); // set frame number to current seekbar location
+        frame = videoGrabber.grabFrame();
+
+        seekBar.setMax(length_frames - 2); // update seekbar max value to total num frames;
+
+
+        while (count < length_frames) { // keep getting new frame until it contains data or until the end of the video
+            frame = videoGrabber.grabFrame();
+            if (matConverter.convert(frame.clone()) != null) {
+                break;
+            }
+            count++;
+        }
+
+        Log.i(TAG, "frame length:" + length_frames + "current frame: " + count);
+        if (frame == null) {
+            Log.i(TAG, "frame is null for some reason!");
+        }
+
+        //grabbedMatFrame = matConverter.convert(frame);
         grabbedMatFrame = matConverter.convert(frame.clone());
+        //Log.i(TAG, "grabbedmatframe:" + grabbedMatFrame.empty());
+        if (grabbedMatFrame == null) {
+            Log.i(TAG, "grabbedMatFrame is null for some reason!");
+        }
+        Log.i(TAG, "before printing frame");
+        Log.i(TAG, "frame:" + grabbedMatFrame.toString());
 
         float aspectRatioInverse = (float) videoGrabber.getImageHeight()/videoGrabber.getImageWidth();
         float aspectRatio = (float) videoGrabber.getImageWidth()/videoGrabber.getImageHeight();
@@ -419,13 +501,16 @@ public class MainActivity extends Activity {
         } else {
             newsize = new Size((int) (aspectRatio*height), height);
         }
-        Log.i(TAG, "newsize: " + newsize.height() + "," + newsize.width() + "aspect ratio: " );
+        Log.i(TAG, "newsize: " + newsize.height() + "," + newsize.width() + "aspect ratio: " + newsize.width()/newsize.height());
+        resizeFactor = newsize.width()/videoGrabber.getImageWidth();
+
         resize(grabbedMatFrame, grabbedMatFrame, newsize);
         updateImage(grabbedMatFrame);
     }
 
     // Threshold frame with opencv and update imageview with bitmap
     private void updateImage(Mat originalMatFrame) throws NullPointerException{
+        //todo: make this worker thread
         Mat matFrame = originalMatFrame.clone();
         long startRenderImage = System.nanoTime();
         Bitmap currentImage;
@@ -448,35 +533,38 @@ public class MainActivity extends Activity {
         double maxVal = 0;
         int maxValIdx = 0;
 
-        for (int i = 0; i < contours.size(); i++) {
-            double eachContourArea = contourArea(contours.get(i));
-            if (maxVal < eachContourArea) {
-                maxVal = eachContourArea;
-                maxValIdx = i;
+        if (!contours.empty()) { // draw circle only if at least one contour was found
+            for (int i = 0; i < contours.size(); i++) {
+                double eachContourArea = contourArea(contours.get(i));
+                if (maxVal < eachContourArea) {
+                    maxVal = eachContourArea;
+                    maxValIdx = i;
+                }
             }
-        }
-        bestContour = contours.get(maxValIdx);
-        Moments bestMoments = new Moments();
-        try {
-            bestMoments = moments(bestContour);
+            bestContour = contours.get(maxValIdx);
+            Moments bestMoments = new Moments();
+            try {
+                bestMoments = moments(bestContour);
 
-        } catch (NullPointerException e) {
-            //
+            } catch (NullPointerException e) {
+                //
+            }
+
+            Log.i("moments", "" + bestMoments.m00());
+            Point2f center = new Point2f();
+            float[] radius = new float[1];
+            try {
+                minEnclosingCircle(bestContour, center, radius);
+            } catch (NullPointerException e) {
+                Log.i(TAG, "enclosing circle:" + e.toString());
+            }
+
+            Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
+            int intRadius = (int) radius[0];
+            Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
+            circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
         }
 
-        Log.i("moments", "" + bestMoments.m00());
-        Point2f center = new Point2f();
-        float[] radius = new float[1];
-        try {
-            minEnclosingCircle(bestContour, center, radius);
-        } catch (NullPointerException e) {
-            //
-        }
-
-        Log.i("circle", "" + center.x() + "," + center.y() + "," + radius[0]);
-        int intRadius = (int) radius[0];
-        Point pointCenter = new Point(Math.round(center.x()), Math.round(center.y()));;
-        circle(matFrame, pointCenter, intRadius, org.bytedeco.javacpp.helper.opencv_core.AbstractScalar.GREEN, 5, 8, 0);
 
         Switch switchShowThreshold = (Switch) findViewById(R.id.switchShowThreshold);
         if (switchShowThreshold.isChecked()) {
@@ -566,6 +654,49 @@ public class MainActivity extends Activity {
         editor.putInt("V_MAX", V_MAX);
         Log.i(TAG, "prefs: " + H_MIN + "," + H_MAX + "," + S_MIN + "," + S_MAX + "," + V_MIN + "," + V_MAX );
         editor.apply();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId())
+        {
+            case R.id.mnuHelp:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sraorao/AnimApp"));
+                startActivity(browserIntent);
+                break;
+            case R.id.mnuLoadPresets:
+                Intent intent = new Intent(MainActivity.this, PresetsActivity.class);
+                MainActivity.this.startActivity(intent);
+                break;
+        }
+        return true;
+    }
+
+    // Writes line to csv file
+    private void writeTEXT(String data, String fileName, Context context) {
+        try {
+            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File file = new File(path, fileName);
+            Log.i(TAG, "CONFIG filename: " + file.toString());
+            FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+            bufferedWriter.write(data);
+            bufferedWriter.close();
+            outputStreamWriter.close();
+            fileOutputStream.close();
+        } catch(IOException e) {
+            Log.i(TAG, "CONFIG file Writing failed" + e.toString());
+
+        }
     }
 }
 

@@ -4,7 +4,7 @@
             "outputFile": "/home/srao/AndroidStudioProjects/AnimApp/app/build/intermediates/incremental/mergeReleaseResources/merged.dir/values-v26/values-v26.xml",
             "map": [
                 {
-                    "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/821efd30b2cf3957ce6a9ce1d2a735c3/res/values-v26/values-v26.xml",
+                    "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/dcfb88e1ddb0e4da7a77e4d775a0e197/res/values-v26/values-v26.xml",
                     "from": {
                         "startLines": "2,3,4,8,12,16",
                         "startColumns": "4,4,4,4,4,4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/design-26.1.0.aar/4a5b6641095b0c4c287a725a5e331f70/res/values-v26/values-v26.xml",
+                    "source": "/home/srao/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/cad22eeac800324da6a6dc7cff5b85b9/res/values-v26/values-v26.xml",
                     "from": {
                         "startLines": "2,6",
                         "startColumns": "4,4",

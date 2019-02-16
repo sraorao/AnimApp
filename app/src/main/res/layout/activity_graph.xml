@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabShare"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:clickable="true"
+        app:srcCompat="@android:drawable/ic_menu_share" />
 
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graph_view"
@@ -49,6 +58,12 @@
                 android:ems="10"
                 android:inputType="number"
                 android:text="0" />
+            <Button
+                android:id="@+id/btnTimeBins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Bins" />
 
             <SeekBar
                 android:id="@+id/seekBarFrame"
