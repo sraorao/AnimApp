@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.bytedeco.javacpp-presets:libfreenect2:0.2.0-1.4.4@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bytedeco.javacpp-presets/libfreenect2/0.2.0-1.4.4/81713e81a781ee37ad10835500afad52179d4b80/libfreenect2-0.2.0-1.4.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bytedeco.javacpp-presets/libfreenect2/0.2.0-1.4.4/ade5c974bcbf8edb561d43aab1f30c277106ce56/libfreenect2-0.2.0-1.4.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

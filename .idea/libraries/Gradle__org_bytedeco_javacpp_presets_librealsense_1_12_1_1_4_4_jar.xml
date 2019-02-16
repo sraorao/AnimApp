@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.bytedeco.javacpp-presets:librealsense:1.12.1-1.4.4@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bytedeco.javacpp-presets/librealsense/1.12.1-1.4.4/246ded3a1056bc3aaee09d1eb342704d7d4652e3/librealsense-1.12.1-1.4.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bytedeco.javacpp-presets/librealsense/1.12.1-1.4.4/c2054ce946635461a07f1bb57fcd8718618bdaf9/librealsense-1.12.1-1.4.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
